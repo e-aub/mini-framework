@@ -31,7 +31,7 @@ const Router = (() => {
     handleLocation();
   };
 
-  return { addRoutes, navigate, init };
+  return { addRoutes, navigate, init  , routes};
 })();
 
-export const { addRoutes, navigate, init } = Router;
+export const { addRoutes, navigate, init  , routes} = Router;
