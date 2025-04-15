@@ -1,20 +1,37 @@
-import { createElement } from "./chaos.js";
+import { createElement, render } from "./chaos.js";
 
-const root = document.getElementById("root");
+const Router = (() => {
+  const routes = {};
+  let currentPath = null;
 
-const routes = {};
+  const addRoutes = (routesConfig) => {
+    Object.assign(routes, routesConfig);
+  };
 
-const route = (event) => {
-  event = event || window.event;
-  event.preventDefault();
-  window.history.pushState({}, "", event.target.href);
-  handleLocation();
-};
+  const navigate = (path) => {
+    if (path === currentPath) return;
+    window.history.pushState({}, "", path);
+    handleLocation();
+  };
 
-const handleLocation = async () => {
-  const path = window.location.pathname;
-  const page = routes[path];
-  root.appendChild(createElement(page));
-};
+  const handleLocation = () => {
+    const path = window.location.pathname;
+    currentPath = path;
 
-window.route = route;
+    const component =
+      routes[path] ||
+      routes["*"] ||
+      (() => createElement("h1", null, "404 Not Found"));
+
+    render(component);
+  };
+
+  const init = () => {
+    window.onpopstate = handleLocation;
+    handleLocation();
+  };
+
+  return { addRoutes, navigate, init };
+})();
+
+export const { addRoutes, navigate, init } = Router;

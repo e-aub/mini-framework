@@ -1,6 +1,6 @@
 const root = document.getElementById("root");
 
-export const Chaos = (() => {
+const Chaos = (() => {
   const states = [];
   let stateIndex = 0;
   let currentRootComponent = null;
