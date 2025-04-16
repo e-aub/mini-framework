@@ -1,11 +1,14 @@
-import { createElement, render } from "./chaos.js";
-
+import { render, c } from "./chaos.js";
 const Router = (() => {
   const routes = {};
   let currentPath = null;
+  let initialized = false;
 
   const addRoutes = (routesConfig) => {
     Object.assign(routes, routesConfig);
+    if (!initialized) {
+      initializeRouter();
+    }
   };
 
   const navigate = (path) => {
@@ -17,21 +20,24 @@ const Router = (() => {
   const handleLocation = () => {
     const path = window.location.pathname;
     currentPath = path;
+    const component = routes[path] || routes["*"];
 
-    const component =
-      routes[path] ||
-      routes["*"] ||
-      (() => createElement("h1", null, "404 Not Found"));
-
-    render(component);
+    if (component) {
+      render(component);
+    } else {
+      console.error(`No route found for path: ${path}`);
+    }
   };
 
-  const init = () => {
+  const initializeRouter = () => {
+    if (initialized) return;
     window.onpopstate = handleLocation;
+    window.navigate = navigate;
     handleLocation();
+    initialized = true;
   };
 
-  return { addRoutes, navigate, init  , routes};
+  return { addRoutes, navigate, routes };
 })();
 
-export const { addRoutes, navigate, init  , routes} = Router;
+export const { addRoutes, navigate, routes } = Router;

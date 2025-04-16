@@ -1,18 +1,37 @@
-import { render } from "../core/chaos.js";
-import { addRoutes, routes } from "../core/router.js";
+import { c } from "../core/chaos.js";
+import { navigate } from "../core/router.js";
 
-export default function App() {
-  const path = document.location.pathname;
-  addRoutes({
-    "/": HomePage,
-    "/about": AboutPage,
-    "*": NotFound,
-  });
-  const func = routes[path];
-  if (func === undefined) {
-    return NotFound();
-  }
-  return func();
+export function HomePage() {
+  return c(
+    "div",
+    null,
+    c("h1", null, "Home Page"),
+    c(
+      "button",
+      {
+        onClick: () => {
+          navigate("/about");
+        },
+      },
+      "about"
+    ),
+    "hello world"
+  );
 }
 
-render(App);
+export function AboutPage() {
+  return c(
+    "div",
+    null,
+    c("h1", null, "About Page"),
+    c(
+      "button",
+      {
+        onClick: () => {
+          navigate("/");
+        },
+      },
+      "home"
+    )
+  );
+}

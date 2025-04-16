@@ -11,7 +11,11 @@ const Chaos = (() => {
     states[currentIndex] === undefined ? initVal : states[currentIndex];
 
     const setState = (newVal) => {
-      states[currentIndex] = newVal;
+      if (typeof newVal === "function") {
+        states[currentIndex] = newVal(states[currentIndex]);
+      } else {
+        states[currentIndex] = newVal;
+      }
       render();
     };
 
