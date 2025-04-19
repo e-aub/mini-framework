@@ -1,5 +1,7 @@
 let states = [];
 let index = 0;
+let lastComponentIndex = 0;
+let stateToComponent = new Map();
 
 function useState(initialState) {
     if (typeof states[index] === 'undefined') {
@@ -23,6 +25,23 @@ function useState(initialState) {
     const state = states[localIndex];
     index++;
     return [state, setState];
+}
+
+function render(component) {
+    lastComponentIndex = index;
+    const result = component();
+    for (let i = lastComponentIndex; i < index; i++) {
+        stateToComponent.set(i, component);
+    }
+    lastComponentIndex = index;
+    return result;
+}
+
+function rerender(component) {
+    if (component) {
+        index = 0; // Reset index for re-render
+        component();
+    }
 }
 
 // function test() {
