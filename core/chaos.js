@@ -54,17 +54,15 @@ const Chaos = (() => {
       }
     });
 
-    node.children.flat().forEach((child) => {
-      if (
-        typeof child == "string" ||
-        typeof child == "number"
-      ) {
-        element.appendChild(document.createTextNode(String(child)));
-      } else {
-        element.appendChild(createElement(child));
-      }
-    });
-
+    if (node.children) {
+      node.children.forEach((child) => {
+        if (typeof child == "string" || typeof child == "number") {
+          element.appendChild(document.createTextNode(String(child)));
+        } else {
+          element.appendChild(createElement(child));
+        }
+      });
+    }
     return element;
   };
 
