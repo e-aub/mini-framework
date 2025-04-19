@@ -1,37 +1,33 @@
-import { c } from "../core/chaos.js";
-import { navigate } from "../core/router.js";
+import { c, useState } from "../core/chaos.js";
 
-export function HomePage() {
-  return c(
-    "div",
-    null,
-    c("h1", null, "Home Page"),
+export default function App() {
+  const [content, setContent] = useState("");
+  const [todos, setTodos] = useState([]);
+  console.log(content, todos);
+  
+  return c("div", { className: "app" }, [
+    c("h1", null, "Todo App"),
     c(
-      "button",
+      "input",
       {
-        onClick: () => {
-          navigate("/about");
+        onChange: (e) => {
+          setContent(e.target.value);
         },
-      },
-      "about"
+        placeholder: "Add a todo",
+      }
     ),
-    "hello world"
-  );
-}
-
-export function AboutPage() {
-  return c(
-    "div",
-    null,
-    c("h1", null, "About Page"),
     c(
       "button",
       {
         onClick: () => {
-          navigate("/");
+          setTodos((prev) => [...prev, content]);
+          setContent("");
         },
       },
-      "home"
-    )
-  );
+      "submit"
+    ),
+    todos.length > 0
+      ? c("ul", null, [todos.map((todo) => c("li", null, todo))])
+      : c("p", null, "No todos yet"),
+  ]);
 }

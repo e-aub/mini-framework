@@ -7,9 +7,10 @@ const Chaos = (() => {
 
   const useState = (initVal) => {
     const currentIndex = stateIndex;
-    states[currentIndex] =
-    states[currentIndex] === undefined ? initVal : states[currentIndex];
-
+    if (states[currentIndex] === undefined) {
+      states[currentIndex] = initVal;
+    }
+    
     const setState = (newVal) => {
       if (typeof newVal === "function") {
         states[currentIndex] = newVal(states[currentIndex]);
@@ -18,7 +19,7 @@ const Chaos = (() => {
       }
       render();
     };
-
+  
     stateIndex++;
     return [states[currentIndex], setState];
   };
@@ -54,7 +55,10 @@ const Chaos = (() => {
     });
 
     node.children.flat().forEach((child) => {
-      if (typeof child == "string" || typeof child == "number") {
+      if (
+        typeof child == "string" ||
+        typeof child == "number"
+      ) {
         element.appendChild(document.createTextNode(String(child)));
       } else {
         element.appendChild(createElement(child));
@@ -68,10 +72,9 @@ const Chaos = (() => {
     if (Component) {
       currentRootComponent = Component;
     }
-    stateIndex = 0;
     root.replaceChildren(createElement(currentRootComponent()));
   };
-
+  stateIndex = 0;
   return { useState, c, createElement, render };
 })();
 

@@ -1,8 +1,5 @@
-import { addRoutes } from "../core/router.js";
-import { HomePage, AboutPage } from "./app.js";
+import { render } from "../core/chaos.js";
+import App from "./app.js";
 
-addRoutes({
-  "/": HomePage,
-  "/about": AboutPage,
-});
+render(App);
 
