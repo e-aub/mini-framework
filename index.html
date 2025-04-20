@@ -9,9 +9,47 @@
 
 <body>
     <div id="root"></div>
-    <script type="module" src="./core/state.js"></script>
-    <script type="module" src="./core/dom.js">
-    </script>
+   <script type="module">
+    // app.js or index.js
+
+import { render, createElement } from './core/dom.js';
+import { useState } from './core/state.js';
+function Dog() {
+    const dogs = ["Rex", "Buddy", "Max", "Bella"];
+    const [dog, setDog] = useState(dogs[Math.floor(Math.random() * dogs.length)]);
+    return createElement("div", { className: "dog" }, [
+        createElement("button", { onClick: () => setDog(dogs[Math.floor(Math.random() * dogs.length)]) }, ["Click me"]),
+        createElement("p", { className: "dog" }, [`Dog: ${dog}`])
+    ]);
+}
+
+function Person() {
+    const persons =  ["john", "jane", "jim", "jill"];
+    const [person, setPerson] = useState(null);
+    return createElement("div", { className: "person" }, [
+        createElement("button", { onClick: () => setPerson(persons[Math.floor(Math.random() * persons.length)]) }, ["Click me"]),
+        createElement("p", { className: "person" }, [`Person: ${person}`]),
+        Dog()
+    ]);
+}
+
+function App() {
+    const [count, setCount] = useState(0);
+
+
+    
+    return createElement("div", { className: "example-component" }, [
+        createElement("h1", { className: "title" }, ["Hello Virtual DOM!"]),
+        createElement("button", { onClick: () => setCount(count + 1) }, ["Click me"]),
+        createElement("p", { className: "count" }, [`Count: ${count}`]),
+        Person()
+    ]);
+}
+
+// Start the rendering process
+render(App);
+
+   </script>
 </body>
 
 </html>

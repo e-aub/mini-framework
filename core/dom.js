@@ -1,103 +1,81 @@
-let states = [];
-let index = 0;
-let lastComponentIndex = 0;
-let stateToComponent = new Map();
+// vdom.js
+import { componentIndexes, componentStates } from "./state.js";
+let currentComponent = null;
 
-export function useState(initialState) {
-    if (typeof states[index] === 'undefined') {
-        if (typeof initialState === 'function') {
-            states[index] = initialState();
-        } else {
-            states[index] = initialState;
+const root = document.getElementById("root");
+
+// Function to create virtual DOM nodes
+function createElement(tag, props, ...children) {
+    // Flatten children array and handle text nodes
+    const processedChildren = children.flat().map(child => {
+        if (typeof child === "string" || typeof child === "number") {
+            return {
+                type: "text",
+                value: child
+            };
         }
-        var localIndex = index;
-        index++;
-    }
+        return child;
+    });
 
-    const setState = (newState) => {
-        if (typeof newState === 'function') {
-            states[localIndex] = newState(states[localIndex]);
-        } else {
-            states[localIndex] = newState;
-        }
-        console.log(states[localIndex]);
-        rerender(localIndex); 
-    };
-
-    const state = states[localIndex];
-    console.log("staaaaaaaaaaaaaaaate", state, "local", localIndex)
-    return [state, setState];
-}
-var root = document.getElementById("root");
-function Component(func, props) {
-    return func(props);
-}
-function createElement(tag, props, children) {
     return {
-        tag: tag,
+        tag,
         props: props || {},
-        children: children || [],
+        children: processedChildren
     };
 }
+
+// Function to render the virtual DOM to real DOM
 function c(node) {
-    if (typeof node === "string" || typeof node === "number") {
-        return document.createTextNode(String(node));
+    if (!node) return null;
+    
+    if (node.type === "text") {
+        const textNode = document.createTextNode(String(node.value));
+        node["ref"] = textNode;
+        return textNode;
     }
-    var element = document.createElement(node.tag);
-    Object.entries(node.props).forEach(function (_a) {
-        var name = _a[0], Val = _a[1];
-        switch (name) {
-            case "id":
-                element.id = Val;
-                break;
-            case "className":
-                element.className = Val;
-                break;
-            case "title":
-                element.title = Val;
-                break;
-            default:
-                if (name.startsWith("on") && typeof Val === "function") {
-                    element[name.toLowerCase()] = Val;
-                }
-                else {
-                    element.setAttribute(name, Val);
-                }
+
+    const element = document.createElement(node.tag);
+
+    Object.entries(node.props).forEach(([name, val]) => {
+        if (name.startsWith("on") && typeof val === "function") {
+            element[name.toLowerCase()] = val;
+        } else if (name === "className") {
+            element.className = val;
+        } else {
+            element.setAttribute(name, val);
         }
     });
-    node.children.forEach(function (child) {
-        element.appendChild(c(child));
+
+    node.children.forEach(child => {
+        if (typeof child === "function") {
+            const childNode = child();
+            element.appendChild(c(childNode));
+        } else {
+            element.appendChild(c(child));
+        }
     });
+
+    node["ref"] = element;
     return element;
 }
-function render(component, props, root) {
 
-    lastComponentIndex = index;
-    var vdom = component(component, props);
-    for (let i = lastComponentIndex; i < index; i++) {
-        stateToComponent.set(i, component);
+// Function to render a component and manage state
+function render(componentFn, props) {
+    currentComponent = componentFn;
+
+    // Initialize states and index if this is the first render
+    if (!componentStates.has(componentFn)) {
+        componentStates.set(componentFn, { states: [], vdom: null });
     }
-    lastComponentIndex = index;
-    root.appendChild(c(vdom));
+    componentIndexes.set(componentFn, 0); // reset hook index to 0 every render
+
+    const vdom = componentFn(props);
+    const componentState = componentStates.get(componentFn);
+    componentState.vdom = vdom;
+    
+    root.innerHTML = ""; // Clear the previous content
+    console.log("vdom", vdom);
+    root.appendChild(c(vdom)); // Render new VDOM
 }
 
-function rerender(stateIndex) {
-    let component = stateToComponent.get(stateIndex);
-    console.log(component);
-    const newVdom = component();
-    console.log(newVdom.tag)
-    root.innerHTML = "";
-    root.appendChild(c(newVdom));
-}
-
-
-// ✅ Finally, use the render function
-render(function () {
-    index = 0;
-    const [count, setCount] = useState(0);
-    return createElement("div", { className: "example-component" }, [
-        createElement("h1", { className: "title" }, ["Hello Virtual DOM!"]),
-        createElement("button", { onClick: () => setCount(count + 1) }, ["Click me"]),
-        createElement("p", { className: "count" }, [count])
-    ]);
-}, {}, root);
+export { createElement, render, currentComponent };

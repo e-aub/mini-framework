@@ -1,65 +1,41 @@
-let states = [];
-let index = 0;
-let lastComponentIndex = 0;
-let stateToComponent = new Map();
+// useState.js
+import { currentComponent, render } from './dom.js';
+// A map to store the state for each component
+const componentStates = new Map(); // Component → {states: [], vdom: null}
+const componentIndexes = new Map(); // Component → current hook index
 
-export function useState(initialState) {
-    if (typeof states[index] === 'undefined') {
-        if (typeof initialState === 'function') {
-            states[index] = initialState();
-        } else {
-            states[index] = initialState;
-        }
+function useState(initial) {
+    // Ensure component state exists
+    if (!componentStates.has(currentComponent)) {
+        componentStates.set(currentComponent, { states: [], vdom: null });
     }
-    const localIndex = index;
+    
+    const componentState = componentStates.get(currentComponent);
+    const states = componentState.states;
+    const idx = componentIndexes.get(currentComponent) || 0;
 
-    const setState = (newState) => {
-        if (typeof newState === 'function') {
-            states[localIndex] = newState(states[localIndex]);
-        } else {
-            states[localIndex] = newState;
-        }
-        rerender(); 
+    // Initialize state if this is the first time this hook is used
+    if (states[idx] === undefined) {
+        states[idx] = typeof initial === 'function' ? initial() : initial;
+    }
+
+    const localIndex = idx;
+
+    // Set state function to update the state and rerender the component
+    const setState = (value) => {
+        states[localIndex] = typeof value === 'function'
+            ? value(states[localIndex])
+            : value;
+
+        rerender(currentComponent);
     };
 
-    const state = states[localIndex];
-    index++;
-    return [state, setState];
+    componentIndexes.set(currentComponent, idx + 1);
+    return [states[localIndex], setState];
 }
 
-function render(component) {
-  
-    return result;
+function rerender(componentFn) {
+    render(componentFn);
 }
 
-function rerender(component) {
-    if (component) {
-        index = 0; // Reset index for re-render
-        component();
-    }
-}
-
-// function test() {
-//     index = 0; // Reset index to simulate re-render
-//     const [count, setCount] = useState(0);
-//     const persons =  ["john", "jane", "jim", "jill"];
-//     const [person, setPerson] = useState(null);
-//     const button = document.getElementById('count');
-//     const countDisplay = document.getElementById('count-display');
-//     const personDisplay = document.getElementById('person-display');
-//     button.onclick = () => {
-//         setCount((count) => count + 1);
-//         setPerson((person) => persons[count]);
-//     };
-
-//     countDisplay.textContent = `Count: ${count}`;
-//     personDisplay.textContent = `Person: ${person}`;
-// }
-
-// function rerender() {
-//     test(); // Re-run the component
-// }
-
-// test(); // Initial render
-
-export default useState;
+export { useState, rerender, componentStates, componentIndexes, currentComponent };
