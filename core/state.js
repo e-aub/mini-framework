@@ -3,7 +3,7 @@ let index = 0;
 let lastComponentIndex = 0;
 let stateToComponent = new Map();
 
-function useState(initialState) {
+export function useState(initialState) {
     if (typeof states[index] === 'undefined') {
         if (typeof initialState === 'function') {
             states[index] = initialState();
@@ -28,12 +28,7 @@ function useState(initialState) {
 }
 
 function render(component) {
-    lastComponentIndex = index;
-    const result = component();
-    for (let i = lastComponentIndex; i < index; i++) {
-        stateToComponent.set(i, component);
-    }
-    lastComponentIndex = index;
+  
     return result;
 }
 
