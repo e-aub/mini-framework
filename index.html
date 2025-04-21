@@ -10,7 +10,7 @@
 <body>
     <div id="root"></div>
    <script type="module">
-    // app.js or index.js
+    
 
 import { render, createElement } from './core/dom.js';
 import { useState } from './core/state.js';
@@ -40,13 +40,13 @@ function App() {
     
     return createElement("div", { className: "example-component" }, [
         createElement("h1", { className: "title" }, ["Hello Virtual DOM!"]),
-        createElement("button", { onClick: () => setCount(count + 1) }, ["Click me"]),
+        createElement("button", { onClick: () => setCount((count) => count + 1) }, ["Click me"]),
         createElement("p", { className: "count" }, [`Count: ${count}`]),
         Person()
     ]);
 }
 
-// Start the rendering process
+
 render(App);
 
    </script>

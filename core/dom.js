@@ -1,12 +1,14 @@
-// vdom.js
+
 import { componentIndexes, componentStates } from "./state.js";
-let currentComponent = null;
+import { diff } from "./diff.js";
+
+export let currentComponent = null;
 
 const root = document.getElementById("root");
 
-// Function to create virtual DOM nodes
+
 function createElement(tag, props, ...children) {
-    // Flatten children array and handle text nodes
+    
     const processedChildren = children.flat().map(child => {
         if (typeof child === "string" || typeof child === "number") {
             return {
@@ -24,9 +26,14 @@ function createElement(tag, props, ...children) {
     };
 }
 
-// Function to render the virtual DOM to real DOM
+
 function c(node) {
     if (!node) return null;
+    
+    
+    if (typeof node === 'function') {
+        return c(node());
+    }
     
     if (node.type === "text") {
         const textNode = document.createTextNode(String(node.value));
@@ -59,23 +66,57 @@ function c(node) {
     return element;
 }
 
-// Function to render a component and manage state
+
 function render(componentFn, props) {
     currentComponent = componentFn;
 
-    // Initialize states and index if this is the first render
+    
     if (!componentStates.has(componentFn)) {
         componentStates.set(componentFn, { states: [], vdom: null });
     }
-    componentIndexes.set(componentFn, 0); // reset hook index to 0 every render
+    componentIndexes.set(componentFn, 0); 
 
     const vdom = componentFn(props);
     const componentState = componentStates.get(componentFn);
-    componentState.vdom = vdom;
     
-    root.innerHTML = ""; // Clear the previous content
-    console.log("vdom", vdom);
-    root.appendChild(c(vdom)); // Render new VDOM
+    
+    if (!componentState.vdom) {
+        root.innerHTML = "";
+        const domNode = c(vdom);
+        root.appendChild(domNode);
+        componentState.vdom = vdom;
+    } else {
+        
+        diff(componentState.vdom, vdom);
+        componentState.vdom = vdom;
+    }
 }
 
-export { createElement, render, currentComponent };
+function rerender(componentFn) {
+    
+    const previousComponent = currentComponent;
+    
+    
+    currentComponent = componentFn;
+    componentIndexes.set(componentFn, 0);
+    
+    
+    const vdom = componentFn();
+    
+    
+    const componentState = componentStates.get(componentFn);
+    const oldVdom = componentState.vdom;
+    
+    
+    
+    
+    
+    if (oldVdom) {
+        diff(oldVdom, vdom);
+    }
+    
+    
+    
+}
+
+export { createElement, render,c, rerender };
