@@ -59,10 +59,12 @@ function diff(oldVNode, newVNode) {
 
       newChild.ref = existing;
     } else {
-      const newEl = createElement(newChild);
-      newChild.ref = newEl;
-      const refAtIndex = parentEl.childNodes[currentDomIndex];
-      parentEl.insertBefore(newEl, refAtIndex || null);
+      if (typeof newChild != "boolean") {
+        const newEl = createElement(newChild);
+        newChild.ref = newEl;
+        const refAtIndex = parentEl.childNodes[currentDomIndex];
+        parentEl.insertBefore(newEl, refAtIndex || null);
+      } 
     }
 
     currentDomIndex++;

@@ -1,53 +1,58 @@
+import { jsx } from "./dom.js";
 export function Button(props = {}, children = []) {
-  return createElement("button", props, children);
+  return jsx("button", props, children);
 }
 
 export function Div(props = {}, children = []) {
-  return createElement("div", props, children);
+  return jsx("div", props, children);
 }
 
 export function Ul(props = {}, children = []) {
-  return createElement("ul", props, children);
+  return jsx("ul", props, children);
 }
 
 export function Li(props = {}, children = []) {
-  return createElement("li", props, children);
+  return jsx("li", props, children);
 }
 
 export function Link(props = {}, children = []) {
-  return createElement("a", props, children);
+  return jsx("a", props, children);
 }
 
 export function H1(props = {}, children = []) {
-  return createElement("h1", props, children);
+  return jsx("h1", props, children);
 }
 
 export function H2(props = {}, children = []) {
-  return createElement("h2", props, children);
+  return jsx("h2", props, children);
 }
 
 export function H3(props = {}, children = []) {
-  return createElement("h3", props, children);
+  return jsx("h3", props, children);
 }
 
 export function H4(props = {}, children = []) {
-  return createElement("h4", props, children);
+  return jsx("h4", props, children);
 }
 
 export function H5(props = {}, children = []) {
-  return createElement("h5", props, children);
+  return jsx("h5", props, children);
 }
 
 export function H6(props = {}, children = []) {
-  return createElement("h6", props, children);
+  return jsx("h6", props, children);
 }
 
 export function Input(props = {}, children = []) {
-  return createElement("input", props, children);
+  return jsx("input", props, children);
 }
 
 export function P(props = {}, children = []) {
-  return createElement("p", props, children);
+  return jsx("p", props, children);
+}
+
+export function Span(props = {}, children = []) {
+  return jsx("span", props, children);
 }
 
 export function ErrorBoundary({ fallback, children }) {
@@ -57,6 +62,6 @@ export function ErrorBoundary({ fallback, children }) {
     console.error("Error in component:", error);
     return typeof fallback === "function"
       ? fallback(error)
-      : createElement("div", { className: "error" }, "Something went wrong");
+      : jsx("div", { className: "error" }, "Something went wrong");
   }
 }

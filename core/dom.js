@@ -24,7 +24,9 @@ function jsx(tag, props, ...children) {
 }
 
 function createElement(node) {
-  if (!node) return null;
+  if (typeof node == "boolean" || node === null || node === undefined) {
+    return document.createDocumentFragment();
+  }
 
   if (typeof node === "function") {
     return createElement(node());

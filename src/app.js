@@ -1,5 +1,118 @@
-import { jsx } from "../core/dom.js";
+import { Div, Input, H1, Ul, Li, Button, Span } from "../core/components.js"
+import { useState } from "../core/state.js";
 
 export const App = () => {
-  return jsx("h1", null, "hello world");
+  const [todos, setTodos] = useState([]);
+  const [content, setContent] = useState("");
+  const [filter, setFilter] = useState("all"); 
+
+  const addTodo = () => {
+    if (content === "") return;
+    if (todos.some(todo => todo.content === content)) return;
+    
+    setTodos([...todos, { content, completed: false }]);
+    setContent("");
+  };
+
+  const toggleTodo = (index) => {
+    setTodos(todos.map((todo, i) => 
+      i === index ? { ...todo, completed: !todo.completed } : todo
+    ));
+  };
+
+  const toggleAll = () => {
+    const allCompleted = todos.every(todo => todo.completed);
+    setTodos(todos.map(todo => ({ ...todo, completed: !allCompleted })));
+  };
+
+  const filteredTodos = todos.filter(todo => {
+    if (filter === "all") return true;
+    if (filter === "active") return !todo.completed;
+    if (filter === "completed") return todo.completed;
+    return true;
+  });
+
+  return Div({ className: "todo-container" }, [
+    H1({ className: "todo-header" }, "Todo App"),
+    
+    Div({ className: "input-container" }, [
+      Input({
+        type: "text",
+        value: content,
+        onInput: (e) => setContent(e.target.value),
+        onKeyDown: (e) => {
+          if (e.key === "Enter") addTodo();
+        },
+        className: "todo-input",
+        placeholder: "What needs to be done?"
+      }),
+      Button({ 
+        onClick: addTodo,
+        className: "add-button"
+      }, "+")
+    ]),
+    
+    todos.length > 0 && Button(
+      {
+        onClick: toggleAll,
+        className: "toggle-all-button"
+      },
+      todos.every(todo => todo.completed) ? "Uncheck All" : "Check All"
+    ),
+    
+    Ul(
+      { className: "todo-list" },
+      filteredTodos.map((todo, index) => 
+        Li(
+          { 
+            key: index,
+            className: `todo-item ${todo.completed ? "completed" : ""}`
+          }, [
+            Button({
+              onClick: () => toggleTodo(index),
+              className: `check-button ${todo.completed ? "checked" : ""}`
+            }, todo.completed ? "✓" : ""),
+            Span({ className: "todo-text" }, todo.content)
+          ]
+        )
+      )
+    ),
+    
+    todos.length > 0 && Div({ className: "filter-container" }, [
+      Span({ className: "items-left" }, 
+        `${todos.filter(todo => !todo.completed).length} items left`
+      ),
+      Div({ className: "filters" }, [
+        Button(
+          { 
+            onClick: () => setFilter("all"),
+            className: `filter-button ${filter === "all" ? "selected" : ""}`
+          },
+          "All"
+        ),
+        Button(
+          { 
+            onClick: () => setFilter("active"),
+            className: `filter-button ${filter === "active" ? "selected" : ""}`
+          },
+          "Active"
+        ),
+        Button(
+          { 
+            onClick: () => setFilter("completed"),
+            className: `filter-button ${filter === "completed" ? "selected" : ""}`
+          },
+          "Completed"
+        )
+      ]),
+      
+      todos.some(todo => todo.completed) && Button(
+        {
+          onClick: () => setTodos(todos.filter(todo => !todo.completed)),
+          className: "clear-completed-button"
+        },
+        "Clear completed"
+      )
+    ])
+  ]);
 };
