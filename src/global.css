@@ -6,34 +6,34 @@
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     font-family: 'Arial', sans-serif;
-  }
+}
 
-  .todo-header {
+.todo-header {
     text-align: center;
     color: #333;
     margin-bottom: 20px;
     font-size: 28px;
-  }
+}
 
-  .input-container {
+.input-container {
     display: flex;
     margin-bottom: 20px;
-  }
+}
 
-  .todo-input {
+.todo-input {
     flex: 1;
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 4px 0 0 4px;
     font-size: 16px;
     outline: none;
-  }
+}
 
-  .todo-input:focus {
+.todo-input:focus {
     border-color: #4a90e2;
-  }
+}
 
-  .add-button {
+.add-button {
     background-color: #4a90e2;
     color: white;
     border: none;
@@ -42,13 +42,13 @@
     cursor: pointer;
     font-size: 18px;
     font-weight: bold;
-  }
+}
 
-  .add-button:hover {
+.add-button:hover {
     background-color: #357abd;
-  }
+}
 
-  .toggle-all-button {
+.toggle-all-button {
     background-color: #f1f1f1;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -57,26 +57,30 @@
     cursor: pointer;
     font-size: 14px;
     color: #555;
-  }
+}
 
-  .toggle-all-button:hover {
+.toggle-all-button:hover {
     background-color: #e9e9e9;
-  }
+}
 
-  .todo-list {
+.todo-list {
     list-style-type: none;
     padding: 0;
     margin: 0 0 20px 0;
-  }
+}
 
-  .todo-item {
+.todo-item {
     display: flex;
     align-items: center;
     padding: 12px 0;
     border-bottom: 1px solid #eee;
-  }
+}
 
-  .check-button {
+.todo-item.editing {
+    padding: 0;
+}
+
+.check-button {
     width: 22px;
     height: 22px;
     border: 2px solid #ddd;
@@ -89,25 +93,37 @@
     background-color: white;
     color: white;
     font-weight: bold;
-  }
+}
 
-  .check-button.checked {
+.check-button.checked {
     background-color: #42b983;
     border-color: #42b983;
-  }
+}
 
-  .todo-text {
+.todo-text {
     flex: 1;
     font-size: 16px;
     color: #333;
-  }
+    padding: 8px 0;
+    cursor: pointer;
+}
 
-  .todo-item.completed .todo-text {
+.todo-item.completed .todo-text {
     text-decoration: line-through;
     color: #999;
-  }
+}
 
-  .filter-container {
+.edit-input {
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 16px;
+    border: 1px solid #4a90e2;
+    border-radius: 4px;
+    width: 100%;
+    outline: none;
+}
+
+.filter-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -115,17 +131,17 @@
     font-size: 14px;
     color: #777;
     flex-wrap: wrap;
-  }
+}
 
-  .items-left {
+.items-left {
     margin-right: 10px;
-  }
+}
 
-  .filters {
+.filters {
     display: flex;
-  }
+}
 
-  .filter-button {
+.filter-button {
     background: none;
     border: none;
     margin: 0 5px;
@@ -133,38 +149,38 @@
     border-radius: 3px;
     cursor: pointer;
     color: #777;
-  }
+}
 
-  .filter-button:hover {
+.filter-button:hover {
     color: #4a90e2;
-  }
+}
 
-  .filter-button.selected {
+.filter-button.selected {
     border: 1px solid #4a90e2;
     color: #4a90e2;
-  }
+}
 
-  .clear-completed-button {
+.clear-completed-button {
     background: none;
     border: none;
     color: #777;
     cursor: pointer;
     padding: 3px 7px;
-  }
+}
 
-  .clear-completed-button:hover {
+.clear-completed-button:hover {
     text-decoration: underline;
     color: #555;
-  }
+}
 
-  @media (max-width: 480px) {
+@media (max-width: 480px) {
     .filter-container {
-      flex-direction: column;
-      gap: 10px;
+        flex-direction: column;
+        gap: 10px;
     }
-    
+
     .filters {
-      width: 100%;
-      justify-content: center;
+        width: 100%;
+        justify-content: center;
     }
-  }
+}
