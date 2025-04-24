@@ -22,6 +22,7 @@ function useState(initial) {
 
     
     const setState = (value) => {
+        console.log(currentComponent, localIndex);
         console.log("setState", value, localIndex);
         const oldValue = states[localIndex];
         const newValue = typeof value === 'function' ? value(oldValue) : value;

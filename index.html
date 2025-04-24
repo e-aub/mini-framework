@@ -16,6 +16,16 @@ import { render, createElement } from './core/dom.js';
 import { useState } from './core/state.js';
 import { Button, Div, H1, Input, Ul, Li, P } from './core/dom.js';
 
+const TestNested = ({count}) => {
+    const persons = ["alice", "bob", "charlie"];
+    const [search, setSearch] = useState("");
+    return Div({}, [
+        P({}, [`This is a passed state prop: ${count}`]),
+        Input({ value: search, oninput: (e) => setSearch(e.target.value) }),
+        Ul({}, persons.filter(p => p.includes(search)).map(p => Li({}, [p])))
+    ])
+}
+
 function TodoList() {
     const [todos, setTodos] = useState([]);
     const [input, setInput] = useState("");
@@ -27,7 +37,6 @@ function TodoList() {
     return Div({ className: "todo-list" }, [
         H1({ className: "title" }, ["Todo List"]),
         Input({className: error ? "error" : "input", type: "text", placeholder: "Add a todo", value: input, oninput: (e) => {
-            console.log(error)
             if (todos.includes(e.target.value)) {
                 setError("exists")
             }else{
@@ -35,10 +44,15 @@ function TodoList() {
             }
             setInput(e.target.value)
         } }),
-        Button({ onClick: () => setTodos(()=>{
-            if (todos.includes(input)) {
+        Button({ onClick: () => setTodos(() => {
+            if (input === "") {
                 return todos;
             }
+            if (todos.includes(input)) {
+                setError("exists");
+                return todos;
+            }
+            setError(null);
             return [input, ...todos];
         })}, ["Add Todo"]),
         Button({ onClick: () => setTodos([])}, ["Clear Todos"]),
@@ -48,7 +62,8 @@ function TodoList() {
         ),
         Button({ onClick: () => setCount(count + 1)}, ["Increment"]),
         Button({ onClick: () => setCount(count - 1)}, ["Decrement"]),
-        P({ className: "count" }, [count])
+        P({ className: "count" }, [count]),
+        TestNested({count : count}, [])
     ]);
 }
 

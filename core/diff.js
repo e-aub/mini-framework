@@ -3,7 +3,6 @@ import { c } from './dom.js';
 
 function diff(oldVNode, newVNode) {
   if (!oldVNode || !newVNode) return;
-  console.log("oldVNode", oldVNode);
   const parentEl = oldVNode.ref;
   const oldChildren = oldVNode.children || [];
   const newChildren = newVNode.children || [];
@@ -94,8 +93,6 @@ function patchElement(oldVNode, newVNode) {
 
   const oldProps = oldVNode.props || {};
   const newProps = newVNode.props || {};
-  console.log("oldProps", oldProps?.key);
-  console.log("newProps", newProps?.key);
   Object.keys(newProps).forEach(key => {
     const val = newProps[key];
     const oldVal = oldProps[key];

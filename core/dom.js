@@ -119,7 +119,6 @@ function c(node) {
     });
     
     children.forEach(child => {
-        console.log("oldVnode", child);
         if (typeof child === "function") {
             const childNode = child();
             element.appendChild(c(childNode));
