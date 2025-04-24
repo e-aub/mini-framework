@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./src/global.css">
+    <link rel="stylesheet" href="./styles.css">
 </head>
 
 <body>
@@ -14,40 +14,46 @@
 
 import { render, createElement } from './core/dom.js';
 import { useState } from './core/state.js';
-function Dog() {
-    const dogs = ["Rex", "Buddy", "Max", "Bella"];
-    const [dog, setDog] = useState(dogs[Math.floor(Math.random() * dogs.length)]);
-    return createElement("div", { className: "dog" }, [
-        createElement("button", { onClick: () => setDog(dogs[Math.floor(Math.random() * dogs.length)]) }, ["Click me"]),
-        createElement("p", { className: "dog" }, [`Dog: ${dog}`])
-    ]);
-}
+import { Button, Div, H1, Input, Ul, Li, P } from './core/dom.js';
 
-function Person() {
-    const persons =  ["john", "jane", "jim", "jill"];
-    const [person, setPerson] = useState(null);
-    return createElement("div", { className: "person" }, [
-        createElement("button", { onClick: () => setPerson(persons[Math.floor(Math.random() * persons.length)]) }, ["Click me"]),
-        createElement("p", { className: "person" }, [`Person: ${person}`]),
-        Dog()
-    ]);
-}
-
-function App() {
+function TodoList() {
+    const [todos, setTodos] = useState([]);
+    const [input, setInput] = useState("");
     const [count, setCount] = useState(0);
+    const [error, setError] = useState(null);
 
 
     
-    return createElement("div", { className: "example-component" }, [
-        createElement("h1", { className: "title" }, ["Hello Virtual DOM!"]),
-        createElement("button", { onClick: () => setCount((count) => count + 1) }, ["Click me"]),
-        createElement("p", { className: "count" }, [`Count: ${count}`]),
-        Person()
+    return Div({ className: "todo-list" }, [
+        H1({ className: "title" }, ["Todo List"]),
+        Input({className: error ? "error" : "input", type: "text", placeholder: "Add a todo", value: input, oninput: (e) => {
+            console.log(error)
+            if (todos.includes(e.target.value)) {
+                setError("exists")
+            }else{
+                setError(null)
+            }
+            setInput(e.target.value)
+        } }),
+        Button({ onClick: () => setTodos(()=>{
+            if (todos.includes(input)) {
+                return todos;
+            }
+            return [input, ...todos];
+        })}, ["Add Todo"]),
+        Button({ onClick: () => setTodos([])}, ["Clear Todos"]),
+        Button({ onClick: ()=> setTodos([input, ...todos])}, ["prepend todo"]),
+        Ul( { className: "todo-list" }, 
+            todos.map((todo, index) => Li({ className: "todo", key: index }, [todo, Button({ onClick: () => setTodos(todos.filter(t => t !== todo))}, ["X"])]))
+        ),
+        Button({ onClick: () => setCount(count + 1)}, ["Increment"]),
+        Button({ onClick: () => setCount(count - 1)}, ["Decrement"]),
+        P({ className: "count" }, [count])
     ]);
 }
 
 
-render(App);
+render(TodoList);
 
    </script>
 </body>

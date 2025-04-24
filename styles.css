@@ -1,0 +1,61 @@
+.todo-list {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.title {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 5px;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+ul.todo-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.todo {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.count {
+    text-align: center;
+    font-size: 24px;
+    margin-top: 20px;
+    color: #333;
+}
+
+.error {
+    background-color: red;
+    border: 1px solid red;
+}

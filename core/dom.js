@@ -1,4 +1,3 @@
-
 import { componentIndexes, componentStates } from "./state.js";
 import { diff } from "./diff.js";
 
@@ -26,10 +25,73 @@ function createElement(tag, props, ...children) {
     };
 }
 
+export function Button(props = {}, children = []) {
+    return createElement("button", props, children);
+  }
+  
+  export function Div(props = {}, children = []) {
+      return createElement("div", props, children);
+  }
+  
+  export function Ul(props = {}, children = []) {
+      return createElement("ul", props, children);
+  }
+  
+  export function Li(props = {}, children = []) {
+      return createElement("li", props, children);
+  }
+  
+  export function Link(props = {}, children = []) {
+    return createElement("a", props, children);
+  }
+  
+  export function H1(props = {}, children = []) {
+      return createElement("h1", props, children);
+  }
+  
+  export function H2(props = {}, children = []) {
+      return createElement("h2", props, children);
+  }
+  
+  export function H3(props = {}, children = []) {
+      return createElement("h3", props, children);
+  }
+  
+  export function H4(props = {}, children = []) {
+      return createElement("h4", props, children);
+  }
+  
+  export function H5(props = {}, children = []) {
+      return createElement("h5", props, children);
+  }
+  
+  export function H6(props = {}, children = []) {
+      return createElement("h6", props, children);
+  }
+  
+  export function Input(props = {}, children = []) {
+      return createElement("input", props, children);
+  }
+  
+  export function P(props = {}, children = []) {
+      return createElement("p", props, children);
+  }
+  
+  export function ErrorBoundary({ fallback, children }) {
+    try {
+      return children;
+    } catch (error) {
+      console.error("Error in component:", error);
+      return typeof fallback === "function"
+        ? fallback(error)
+        : createElement("div", { className: "error" }, "Something went wrong");
+    }
+  }
+  
+
 
 function c(node) {
     if (!node) return null;
-    
     
     if (typeof node === 'function') {
         return c(node());
@@ -43,7 +105,10 @@ function c(node) {
 
     const element = document.createElement(node.tag);
 
-    Object.entries(node.props).forEach(([name, val]) => {
+    const props = node.props || {};
+    const children = node.children || [];
+
+    Object.entries(props).forEach(([name, val]) => {
         if (name.startsWith("on") && typeof val === "function") {
             element[name.toLowerCase()] = val;
         } else if (name === "className") {
@@ -52,8 +117,9 @@ function c(node) {
             element.setAttribute(name, val);
         }
     });
-
-    node.children.forEach(child => {
+    
+    children.forEach(child => {
+        console.log("oldVnode", child);
         if (typeof child === "function") {
             const childNode = child();
             element.appendChild(c(childNode));
@@ -86,37 +152,20 @@ function render(componentFn, props) {
         root.appendChild(domNode);
         componentState.vdom = vdom;
     } else {
-        
         diff(componentState.vdom, vdom);
-        componentState.vdom = vdom;
     }
 }
 
 function rerender(componentFn) {
-    
-    const previousComponent = currentComponent;
-    
-    
     currentComponent = componentFn;
     componentIndexes.set(componentFn, 0);
     
-    
     const vdom = componentFn();
-    
     
     const componentState = componentStates.get(componentFn);
     const oldVdom = componentState.vdom;
     
-    
-    
-    
-    
-    if (oldVdom) {
-        diff(oldVdom, vdom);
-    }
-    
-    
-    
+    diff(oldVdom, vdom);
 }
 
 export { createElement, render,c, rerender };

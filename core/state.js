@@ -1,4 +1,3 @@
-
 import { currentComponent, render, c, rerender } from './dom.js';
 
 const componentStates = new Map(); 
@@ -23,6 +22,7 @@ function useState(initial) {
 
     
     const setState = (value) => {
+        console.log("setState", value, localIndex);
         const oldValue = states[localIndex];
         const newValue = typeof value === 'function' ? value(oldValue) : value;
         

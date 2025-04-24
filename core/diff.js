@@ -1,77 +1,125 @@
-import { c } from "./dom.js";
+import { c } from './dom.js';
 
-function diff(oldVdom, newVdom) {
-    
-    if (!oldVdom || !newVdom) return;
 
-    
-    if (oldVdom.type === "text" && newVdom.type === "text") {
-        if (oldVdom.value !== newVdom.value) {
-            console.log("changed text node", oldVdom.value, newVdom.value);
+function diff(oldVNode, newVNode) {
+  if (!oldVNode || !newVNode) return;
+  console.log("oldVNode", oldVNode);
+  const parentEl = oldVNode.ref;
+  const oldChildren = oldVNode.children || [];
+  const newChildren = newVNode.children || [];
 
-            oldVdom.ref.textContent = newVdom.value;
-            oldVdom.value = newVdom.value;
+  let currentDomIndex = 0;
+  const matchedOld = new Set();
 
-            console.log("ooooooold", oldVdom);
-            console.log("neeeeew", newVdom);
+  for (let i = 0; i < newChildren.length; i++) {
+    const newChild = newChildren[i];
+    let matchIndex = -1;
+
+    // Prefer key-based match if available
+    if (newChild.props?.key != null) {
+      for (let j = 0; j < oldChildren.length; j++) {
+        if (matchedOld.has(j)) continue;
+
+        const oldChild = oldChildren[j];
+        if (oldChild.props?.key === newChild.props.key) {
+          matchIndex = j;
+          break;
         }
-        return;
+      }
     }
 
-    
-    if (oldVdom.type !== newVdom.type || oldVdom.tag !== newVdom.tag) {
-        const newElement = c(newVdom);
-        oldVdom.ref.replaceWith(newElement);
-        return;
-    }
+    // Fallback: match by tag/type
+    if (matchIndex === -1) {
+      for (let j = 0; j < oldChildren.length; j++) {
+        if (matchedOld.has(j)) continue;
 
-    
-    if (detectPropsChanges(oldVdom, newVdom)) {
-        const newElement = c(newVdom);
-        oldVdom.ref.replaceWith(newElement);
-        return;
-    }
+        const oldChild = oldChildren[j];
+        const isMatch =
+          (newChild.tag && oldChild.tag && newChild.tag === oldChild.tag) ||
+          (newChild.type === 'text' && oldChild.type === 'text');
 
-    
-    if (oldVdom.children.length !== newVdom.children.length) {
-        const newElement = c(newVdom);
-        oldVdom.ref.replaceWith(newElement);
-        return;
-    }
-    
-    for (let i = 0; i < oldVdom.children.length; i++) {
-        const oldChild = oldVdom.children[i];
-        const newChild = newVdom.children[i];
-        
-        if (typeof newChild === 'function') {
-            const newChildVdom = newChild();
-            diff(oldChild, newChildVdom);
-            newVdom.children[i] = newChildVdom;
-        } else {
-            diff(oldChild, newChild);
+        if (isMatch) {
+          matchIndex = j;
+          break;
         }
+      }
     }
+
+    if (matchIndex !== -1) {
+      const oldChild = oldChildren[matchIndex];
+      patchElement(oldChild, newChild);
+      if (newChild.tag) {
+        diff(oldChild, newChild); // recurse
+      }
+      matchedOld.add(matchIndex);
+
+      const existing = oldChild.ref;
+      const refAtIndex = parentEl.childNodes[currentDomIndex];
+      if (refAtIndex !== existing) {
+        parentEl.insertBefore(existing, refAtIndex || null);
+      }
+
+      newChild.ref = existing;
+    } else {
+      const newEl = c(newChild);
+      newChild.ref = newEl;
+      const refAtIndex = parentEl.childNodes[currentDomIndex];
+      parentEl.insertBefore(newEl, refAtIndex || null);
+    }
+
+    currentDomIndex++;
+  }
+
+  // Remove unmatched old nodes
+  oldChildren.forEach((oldChild, index) => {
+    if (!matchedOld.has(index)) {
+      oldChild.ref?.remove();
+    }
+  });
+
+  oldVNode.children = newVNode.children;
 }
 
-function detectPropsChanges(oldVdom, newVdom) {
-    const oldProps = oldVdom.props;
-    const newProps = newVdom.props;
 
-    
-    for (const key in newProps) {
-        if (oldProps[key] !== newProps[key]) {
-            return true;
-        }
+function patchElement(oldVNode, newVNode) {
+  const el = oldVNode.ref;
+  newVNode.ref = el;
+
+  if (newVNode.type === 'text') {
+    if (newVNode.value !== oldVNode.value) {
+      el.nodeValue = newVNode.value;
     }
+    return;
+  }
 
-    
-    for (const key in oldProps) {
-        if (!(key in newProps)) {
-            return true;
-        }
+  const oldProps = oldVNode.props || {};
+  const newProps = newVNode.props || {};
+  console.log("oldProps", oldProps?.key);
+  console.log("newProps", newProps?.key);
+  Object.keys(newProps).forEach(key => {
+    const val = newProps[key];
+    const oldVal = oldProps[key];
+
+    if (val !== oldVal) {
+      if (key.startsWith('on') && typeof val === 'function') {
+        el[key.toLowerCase()] = val;
+      } else if (key === 'className') {
+        el.className = val;
+      } else {
+        el.setAttribute(key, val);
+      }
     }
+  });
 
-    return false;
+  Object.keys(oldProps).forEach(key => {
+    if (!(key in newProps)) {
+      if (key.startsWith('on')) {
+        el[key.toLowerCase()] = null;
+      } else {
+        el.removeAttribute(key);
+      }
+    }
+  });
 }
 
 export { diff };
