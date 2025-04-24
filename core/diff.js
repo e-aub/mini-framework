@@ -1,5 +1,4 @@
-import { c } from './dom.js';
-
+import { createElement } from "./dom.js";
 
 function diff(oldVNode, newVNode) {
   if (!oldVNode || !newVNode) return;
@@ -35,7 +34,7 @@ function diff(oldVNode, newVNode) {
         const oldChild = oldChildren[j];
         const isMatch =
           (newChild.tag && oldChild.tag && newChild.tag === oldChild.tag) ||
-          (newChild.type === 'text' && oldChild.type === 'text');
+          (newChild.type === "text" && oldChild.type === "text");
 
         if (isMatch) {
           matchIndex = j;
@@ -60,7 +59,7 @@ function diff(oldVNode, newVNode) {
 
       newChild.ref = existing;
     } else {
-      const newEl = c(newChild);
+      const newEl = createElement(newChild);
       newChild.ref = newEl;
       const refAtIndex = parentEl.childNodes[currentDomIndex];
       parentEl.insertBefore(newEl, refAtIndex || null);
@@ -79,12 +78,11 @@ function diff(oldVNode, newVNode) {
   oldVNode.children = newVNode.children;
 }
 
-
 function patchElement(oldVNode, newVNode) {
   const el = oldVNode.ref;
   newVNode.ref = el;
 
-  if (newVNode.type === 'text') {
+  if (newVNode.type === "text") {
     if (newVNode.value !== oldVNode.value) {
       el.nodeValue = newVNode.value;
     }
@@ -93,14 +91,14 @@ function patchElement(oldVNode, newVNode) {
 
   const oldProps = oldVNode.props || {};
   const newProps = newVNode.props || {};
-  Object.keys(newProps).forEach(key => {
+  Object.keys(newProps).forEach((key) => {
     const val = newProps[key];
     const oldVal = oldProps[key];
 
     if (val !== oldVal) {
-      if (key.startsWith('on') && typeof val === 'function') {
+      if (key.startsWith("on") && typeof val === "function") {
         el[key.toLowerCase()] = val;
-      } else if (key === 'className') {
+      } else if (key === "className") {
         el.className = val;
       } else {
         el.setAttribute(key, val);
@@ -108,9 +106,9 @@ function patchElement(oldVNode, newVNode) {
     }
   });
 
-  Object.keys(oldProps).forEach(key => {
+  Object.keys(oldProps).forEach((key) => {
     if (!(key in newProps)) {
-      if (key.startsWith('on')) {
+      if (key.startsWith("on")) {
         el[key.toLowerCase()] = null;
       } else {
         el.removeAttribute(key);

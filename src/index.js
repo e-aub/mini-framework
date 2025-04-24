@@ -1,5 +1,5 @@
-import { render } from "../core/chaos.js";
-import App from "./app.js";
+import { render } from "../core/dom.js";
+import { App } from "./app.js";
 
-render(App);
 
+render(App)

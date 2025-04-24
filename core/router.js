@@ -1,4 +1,4 @@
-import { render, c } from "./chaos.js";
+import { render } from "./chaos.js";
 const Router = (() => {
   const routes = {};
   let currentPath = null;
