@@ -1,5 +1,6 @@
 import { Div, Input, H1, Ul, Li, Button, Span } from "../core/components.js";
-import { useState } from "../core/state.js";
+import { useState, UseStore } from "../core/state.js";
+import {Watch} from "../core/watch.js"
 
 export const App = () => {
   const [todos, setTodos] = useState([]);
@@ -7,6 +8,10 @@ export const App = () => {
   const [filter, setFilter] = useState("all");
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState("");
+
+  Watch(()=>{
+    console.log("todos  has changed", todos)
+  }, [todos])
 
   const startEditing = (index, todoContent) => {
     setEditingId(index);
@@ -70,7 +75,7 @@ export const App = () => {
   };
 
   return Div({ className: "todo-container" }, [
-    H1({ className: "todo-header" }, "Todo App"),
+    H1({ className: "todo-header" }, "todos"),
     Div({ className: "input-container" }, [
       Input({
         type: "text",

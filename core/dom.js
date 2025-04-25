@@ -1,5 +1,6 @@
 import { componentIndexes, componentStates } from "./state.js";
 import { diff } from "./diff.js";
+import { applyCallbacksAfterRender } from "./watch.js";
 
 export let currentComponent = null;
 
@@ -11,6 +12,7 @@ function jsx(tag, props, ...children) {
       return {
         type: "text",
         value: child,
+        ref : null
       };
     }
     return child;
@@ -20,6 +22,7 @@ function jsx(tag, props, ...children) {
     tag,
     props: props || {},
     children: processedChildren,
+    ref : null
   };
 }
 
@@ -85,6 +88,7 @@ function render(componentFn, props) {
   } else {
     diff(componentState.vdom, vdom);
   }
+  applyCallbacksAfterRender();
 }
 
 function rerender(componentFn) {
@@ -97,6 +101,7 @@ function rerender(componentFn) {
   const oldVdom = componentState.vdom;
 
   diff(oldVdom, vdom);
+  applyCallbacksAfterRender();
 }
 
 export { jsx, render, createElement, rerender };
