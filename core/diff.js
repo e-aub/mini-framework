@@ -85,9 +85,7 @@ function patchElement(oldVNode, newVNode) {
   newVNode.ref = el;
 
   if (newVNode.tag === 'input'){
-    if (newVNode?.ref?.value && newVNode?.props?.value){
-      newVNode.ref.value = newVNode.props.value;
-    }
+      newVNode?.ref?.value = newVNode?.props?.value;
   }
 
   if (newVNode.type === "text") {
