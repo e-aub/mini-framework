@@ -53,7 +53,6 @@ export function Watch(callback, deps = null) {
 
     const effects = afterRenderEffects.get(currentComponent);
 
-    // If no deps, always run the effect
     if (!deps) {
         effects.push(() => {
             const cleanup = cleanupFunctions.get(currentComponent);
