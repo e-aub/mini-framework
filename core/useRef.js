@@ -1,6 +1,3 @@
-import { currentComponent } from "./dom.js";
-import { componentStates } from "./state.js";
-
 const refs = new Map();
 
 function useRef(key) {
