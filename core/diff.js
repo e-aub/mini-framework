@@ -85,20 +85,51 @@ function patchElement(oldVNode, newVNode) {
   newVNode.ref = el;
 
   if (newVNode.tag === 'input'){
-    if (!newVNode.ref.value) return;
-      newVNode.ref.value = newVNode?.props?.value;
+    if (newVNode?.props?.value !== undefined) {
+      newVNode.ref.value = newVNode.props.value;
+    }
+    // Apply styles to input
+    if (newVNode.props?.style) {
+      Object.assign(el.style, newVNode.props.style);
+    }
+    return;
   }
 
   if (newVNode.type === "text") {
     if (newVNode.value !== oldVNode.value) {
       el.nodeValue = newVNode.value;
     }
+    // Apply styles to text node
+    if (newVNode.props?.style) {
+      Object.assign(el.style, newVNode.props.style);
+    }
     return;
   }
 
   const oldProps = oldVNode.props || {};
   const newProps = newVNode.props || {};
+
+  // Handle style updates
+  if (newProps.style) {
+    // Clear old styles first
+    if (oldProps.style) {
+      Object.keys(oldProps.style).forEach(key => {
+        el.style[key] = '';
+      });
+    }
+    // Apply new styles
+    Object.assign(el.style, newProps.style);
+  } else if (oldProps.style) {
+    // Clear old styles if new node doesn't have styles
+    Object.keys(oldProps.style).forEach(key => {
+      el.style[key] = '';
+    });
+  }
+
+  // Handle other props
   Object.keys(newProps).forEach((key) => {
+    if (key === 'style') return; // Skip style as it's handled above
+    
     const val = newProps[key];
     const oldVal = oldProps[key];
 
@@ -114,6 +145,8 @@ function patchElement(oldVNode, newVNode) {
   });
 
   Object.keys(oldProps).forEach((key) => {
+    if (key === 'style') return; // Skip style as it's handled above
+    
     if (!(key in newProps)) {
       if (key.startsWith("on")) {
         el[key.toLowerCase()] = null;

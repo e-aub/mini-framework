@@ -1,8 +1,11 @@
 import { componentIndexes, componentStates } from "./state.js";
 import { diff } from "./diff.js";
 import { applyCallbacksAfterRender } from "./watch.js";
+import { refs } from "./useRef.js";
 
 export let currentComponent = null;
+
+
 
 const root = document.getElementById("root");
 
@@ -51,6 +54,11 @@ function createElement(node) {
       element[name.toLowerCase()] = val;
     } else if (name === "className") {
       element.className = val;
+    } else if (name === "KEY") {
+      element.setAttribute("KEY", val);
+      refs.set(val, element);
+    } else if (name === "style" && typeof val === "object") {
+      Object.assign(element.style, val);
     } else {
       element.setAttribute(name, val);
     }

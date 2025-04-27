@@ -102,10 +102,19 @@ export function applyCallbacksAfterRender() {
 
     afterRenderEffects.set(cComp, []);
 
-    queueMicrotask(() => {
-
-    if (currentAfterRenderEffects) {
-        currentAfterRenderEffects.forEach((callback) => callback());
-    }
-})
+    // Use requestAnimationFrame to ensure DOM is ready
+    requestAnimationFrame(() => {
+        if (currentAfterRenderEffects) {
+            currentAfterRenderEffects.forEach((callback) => {
+                try {
+                    const result = callback();
+                    if (typeof result === "function") {
+                        cleanupFunctions.set(cComp, result);
+                    }
+                } catch (error) {
+                    console.error("Error in effect:", error);
+                }
+            });
+        }
+    });
 }
