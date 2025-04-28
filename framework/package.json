@@ -1,0 +1,19 @@
+{
+  "name": "@hacker_man/most-js",
+  "version": "1.0.7",
+  "description": "a simple javascript frontend framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xHozey/mini_framework.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xHozey/mini_framework/issues"
+  },
+  "homepage": "https://github.com/xHozey/mini_framework#readme"
+}

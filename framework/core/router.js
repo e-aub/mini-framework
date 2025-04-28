@@ -1,5 +1,5 @@
-import { render } from "./chaos.js";
-const Router = (() => {
+import { render } from "./dom.js";
+const router = (() => {
   const routes = {};
   let currentPath = null;
   let initialized = false;
@@ -40,4 +40,5 @@ const Router = (() => {
   return { addRoutes, navigate, routes };
 })();
 
-export const { addRoutes, navigate, routes } = Router;
+export const { addRoutes, navigate, routes } = router;
+export { router };

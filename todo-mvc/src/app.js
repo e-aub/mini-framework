@@ -1,7 +1,7 @@
-import { Div, Input, H1, Ul, Li, Button, Span } from "../core/components.js";
-import { useState } from "../core/state.js";
-import { useRef } from "../core/useRef.js";
-import {Watch} from "../core/watch.js"
+// import { Div, Input, H1, Ul, Li, Button, Span } from "../../core/components.js";
+// import { useState } from "../../core/state.js";
+// import { useRef } from "../../core/useRef.js";
+// import {Watch} from "../../core/watch.js"
 import {styles} from "./styles.module.js"
 export const App = () => {
   const [todos, setTodos] = useState([]);
@@ -120,7 +120,7 @@ export const App = () => {
 
   return Div({ 
     className: "todo-container", 
-    KEY: "todo-container",
+    reference: "todo-container",
     style: {
       ...styles.container,
       ...(darkMode ? styles.darkMode.container : {})
@@ -139,7 +139,7 @@ export const App = () => {
     
     H1({ 
       className: "todo-header", 
-      KEY: "zzzzzzz",
+      reference: "zzzzzzz",
       style: {
         ...styles.header,
         ...(darkMode ? styles.darkMode.header : {})
@@ -201,14 +201,14 @@ export const App = () => {
     Ul(
       { 
         className: "todo-list", 
-        KEY: "todo-list",
+        reference: "todo-list",
         style: styles.todoList 
       },
       filteredTodos.map((todo, index) =>
         editingId === index
           ? Li(
               {
-                key: `editing-${index}`,
+                key: `todo-${todo.content}`,
                 className: "todo-item editing",
                 style: {
                   ...styles.todoItem,
@@ -233,7 +233,7 @@ export const App = () => {
             )
           : Li(
               {
-                key: `todo-${index}`,
+                key: `todo-${todo.content}`,
                 className: `todo-item ${todo.completed ? "completed" : ""}`,
                 style: {
                   ...styles.todoItem,

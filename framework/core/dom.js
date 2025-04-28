@@ -54,8 +54,8 @@ function createElement(node) {
       element[name.toLowerCase()] = val;
     } else if (name === "className") {
       element.className = val;
-    } else if (name === "KEY") {
-      element.setAttribute("KEY", val);
+    } else if (name === "reference") {
+      element.setAttribute("reference", val);
       refs.set(val, element);
     } else if (name === "style" && typeof val === "object") {
       Object.assign(element.style, val);
