@@ -3,8 +3,8 @@ import { diff } from "./diff.js";
 import { applyCallbacksAfterRender } from "./watch.js";
 import { refs } from "./useRef.js";
 
-export let currentComponent = null;
-
+export let currentComponent = {component: null};
+const titleToComponentMap = new Map();
 
 
 const root = document.getElementById("root");
@@ -78,15 +78,16 @@ function createElement(node) {
 }
 
 function render(componentFn, props) {
-  currentComponent = componentFn;
+  const title = "root";
+  currentComponent.component = title;
 
   if (!componentStates.has(componentFn)) {
     componentStates.set(componentFn, { states: [], vdom: null });
   }
   componentIndexes.set(componentFn, 0);
 
-  const vdom = componentFn(props);
-  const componentState = componentStates.get(componentFn);
+  const vdom = Component(componentFn, props, title);
+  const componentState = componentStates.get(title);
 
   if (!componentState.vdom) {
     root.innerHTML = "";
@@ -100,10 +101,11 @@ function render(componentFn, props) {
 }
 
 function rerender(componentFn) {
-  currentComponent = componentFn;
+  console.log("rerendering .................", componentFn);
+  currentComponent.component = componentFn;
   componentIndexes.set(componentFn, 0);
 
-  const vdom = componentFn();
+  const vdom = titleToComponentMap.get(componentFn)();
 
   const componentState = componentStates.get(componentFn);
   const oldVdom = componentState.vdom;
@@ -112,4 +114,21 @@ function rerender(componentFn) {
   applyCallbacksAfterRender();
 }
 
-export { jsx, render, createElement, rerender };
+function Component(componentFn, props, title) {
+  currentComponent.component = title;
+  titleToComponentMap.set(title, componentFn);
+  if (!componentIndexes.has(title)) {
+    componentIndexes.set(title, 0);
+  }
+  const vdom = titleToComponentMap.get(title)(props);
+  if (!componentStates.has(title)) {
+    componentStates.set(title, { states: [], vdom: null });
+  }else{
+    componentStates.get(title).vdom = vdom;
+  }
+  console.log(vdom);
+  return vdom;
+}
+
+
+export { jsx, render, createElement, rerender, Component };

@@ -5,7 +5,7 @@ import { router } from "./core/router.js";
 import { useState } from "./core/state.js";
 import { Watch } from "./core/watch.js";
 import { useRef } from "./core/useRef.js";
-
+import { Component } from "./core/dom.js";
 export {
   jsx,
   render,
@@ -26,5 +26,6 @@ export {
   router,
   useState,
   Watch,
-  useRef
+  useRef,
+  Component
 };

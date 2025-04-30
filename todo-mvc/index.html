@@ -4,27 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/src/global.css">
+    <link rel="stylesheet" href="./src/global.css">
 </head>
 
 <body>
     <div id="root"></div>
     <script type="module">
-        import { jsx, render } from 'https://cdn.jsdelivr.net/npm/@hacker_man/most-js@1.0.7/index.js';
-
+        import { jsx, render, useState, Div, P, Button, Component } from '../framework/index.js';
+        // useState()
         const root = document.getElementById('root');
-        const app = () => {
-            return jsx('div', {
-                className: 'app'
-                },
-            [
-                    jsx('h1', {
-                     
-                    }, ["Hello, World!"])
-                ]
-            );
+
+        const test = () => {
+            
+            const [count, setCount] = useState(0);
+            
+            return Div({
+                className: 'test'
+            },[
+            P({
+                className: 'count'
+            }, [count]),
+            Button({
+                onClick: () => setCount(count + 1)
+            }, ["add"])
+            ])
         }
-        render(app, root);
+        const app = () => {
+            const [trigger, setTrigger] = useState(false);
+            return Div({
+                className: 'app'
+            }, [Component(test, {}, "test-1"), Component(test, {}, "test-2"), Button({
+                onClick: () => setTrigger(!trigger)
+            }, ["trigger"])])
+        }
+        render(app);
     </script>
 </body>
 

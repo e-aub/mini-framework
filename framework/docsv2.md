@@ -1,4 +1,3 @@
-
 # MostJS Documentation
 
 ## Introduction
@@ -26,16 +25,19 @@ MostJS is a lightweight frontend framework that puts you in control of your code
 
 ```bash
 # Using npm
-npm install most-js
+npm i @hacker_man/most-js
+```
 
-# Using yarn
-yarn add most-js
+### if you want to use it in browser you can use cdn
+
+```
+import { anything } from 'https://cdn.jsdelivr.net/npm/@hacker_man/most-js@1.0.7/index.js'
 ```
 
 ### Basic Usage
 
 ```js
-import { Div, H1, P, Button, useState, render } from 'most-js';
+import { Div, H1, P, Button, useState, render } from 'https://cdn.jsdelivr.net/npm/@hacker_man/most-js@1.0.7/index.js';
 
 const App = () => {
   const [count, setCount] = useState(0);
@@ -67,7 +69,7 @@ jsx(tag, props, ...children)
 
 * `tag`: The HTML tag name or component function
 * `props`: An object containing attributes, event handlers, and other properties
-* `children`: An array of child elements, text content, or components
+* `children`: An array of children: other elements, text content, or components
 
 **Example:**
 
@@ -89,7 +91,7 @@ MostJS provides creation-components which are predefined functions that use the 
 **Example:**
 
 ```js
-import { Div, P } from 'most-js';
+import { Div, P } from 'https://cdn.jsdelivr.net/npm/@hacker_man/most-js@1.0.7/index.js';
 
 return Div({ className: 'container' }, [
   P({ id: "greeting" }, ["Hello world"])
@@ -102,75 +104,34 @@ MostJS includes the following creation-components:
 
 ```js
 // Button component
-export function Button(props = {}, children = []) {
-  return jsx("button", props, children);
-}
+Button(props = {}, children = [])
 
 // Div component
-export function Div(props = {}, children = []) {
-  return jsx("div", props, children);
-}
-
+Div(props = {}, children = []) 
 // Ul component
-export function Ul(props = {}, children = []) {
-  return jsx("ul", props, children);
-}
-
+Ul(props = {}, children = []) 
 // Li component
-export function Li(props = {}, children = []) {
-  return jsx("li", props, children);
-}
-
+Li(props = {}, children = []) 
 // Link component
-export function Link(props = {}, children = []) {
-  return jsx("a", props, children);
-}
-
+Link(props = {}, children = []) 
 // H1 component
-export function H1(props = {}, children = []) {
-  return jsx("h1", props, children);
-}
-
+H1(props = {}, children = []) 
 // H2 component
-export function H2(props = {}, children = []) {
-  return jsx("h2", props, children);
-}
-
+H2(props = {}, children = []) 
 // H3 component
-export function H3(props = {}, children = []) {
-  return jsx("h3", props, children);
-}
-
+H3(props = {}, children = []) 
 // H4 component
-export function H4(props = {}, children = []) {
-  return jsx("h4", props, children);
-}
-
+H4(props = {}, children = []) 
 // H5 component
-export function H5(props = {}, children = []) {
-  return jsx("h5", props, children);
-}
-
+H5(props = {}, children = []) 
 // H6 component
-export function H6(props = {}, children = []) {
-  return jsx("h6", props, children);
-}
-
+H6(props = {}, children = []) 
 // Input component
-export function Input(props = {}, children = []) {
-  return jsx("input", props, children);
-}
-
+Input(props = {}, children = []) 
 // P component
-export function P(props = {}, children = []) {
-  return jsx("p", props, children);
-}
-
+P(props = {}, children = []) 
 // Span component
-export function Span(props = {}, children = []) {
-  return jsx("span", props, children);
-}
-```
+Span(props = {}, children = []) ```
 
 ### Components
 
@@ -270,7 +231,7 @@ const elementRef = useRef(referenceId);
 
 **Parameters:**
 
-* `referenceId`: A unique identifier string
+* `referenceId`: A unique identifier string, that reference id is a unique id that you give it in props to element with a key of reference the rendering system when finds refernce in props of an element it assumes that it needs to be stored and accseccibble with the use ref function;
 
 **Returns:**
 
@@ -353,7 +314,7 @@ const ThemeToggle = () => {
 
 ### Routing
 
-MostJS provides a simple routing solution for single-page applications.
+MostJS provides a simple routing solution for single-page applications. The routing system allows you to create a single-page application with multiple views.
 
 ```js
 import { Router, Route } from 'most-js';
@@ -362,7 +323,54 @@ const App = () => {
   return Router({}, [
     Route({ path: '/', component: Home }),
     Route({ path: '/about', component: About }),
-    Route({ path: '/contact', component: Contact })
+    Route({ path: '/contact', component: Contact }),
+    // You can also use parameters in routes
+    Route({ path: '/users/:id', component: UserProfile })
+  ]);
+};
+```
+
+The router automatically handles navigation between routes without page reloads. The Route component accepts the following properties:
+
+* `path`: The URL path pattern to match
+* `component`: The component to render when the path matches
+* `exact` (optional): If true, the path must match exactly
+
+#### Accessing Route Parameters
+
+When using parameterized routes like `/users/:id`, you can access the parameters in your component:
+
+```js
+import { Div, H1, P, useParams } from 'most-js';
+
+const UserProfile = () => {
+  const params = useParams();
+  
+  return Div({ className: 'user-profile' }, [
+    H1({}, [`User Profile: ${params.id}`]),
+    P({}, ["User details go here..."])
+  ]);
+};
+```
+
+#### Navigation Between Routes
+
+To navigate between routes programmatically:
+
+```js
+import { Div, Button, navigate } from 'most-js';
+
+const Navigation = () => {
+  return Div({ className: 'navigation' }, [
+    Button({ 
+      onClick: () => navigate('/') 
+    }, ["Home"]),
+    Button({ 
+      onClick: () => navigate('/about') 
+    }, ["About"]),
+    Button({ 
+      onClick: () => navigate('/contact') 
+    }, ["Contact"])
   ]);
 };
 ```
@@ -371,13 +379,15 @@ const App = () => {
 
 ### Core Functions
 
-| Function                          | Description                             |
-| --------------------------------- | --------------------------------------- |
-| `jsx(tag, props, ...children)`  | Creates virtual DOM elements            |
-| `useState(initialValue)`        | Creates a state variable and its setter |
-| `useRef(referenceId)`           | Accesses DOM elements directly          |
-| `Watch(callback, dependencies)` | Executes code when dependencies change  |
-| `render(component, domElement)` | Renders a component to the DOM          |
+| Function                          | Description                                       |
+| --------------------------------- | ------------------------------------------------- |
+| `jsx(tag, props, ...children)`  | Creates virtual DOM elements                      |
+| `useState(initialValue)`        | Creates a state variable and its setter           |
+| `useRef(referenceId)`           | Accesses DOM elements directly                    |
+| `Watch(callback, dependencies)` | Executes code when dependencies change            |
+| `render(component, domElement)` | Renders a component to the DOM                    |
+| `Router({}, [routes])`          | Container for route definitions                   |
+| `Route({ path, component })`    | Defines a route with path and component to render |
 
 ### Creation Components
 
@@ -421,6 +431,70 @@ const Counter = () => {
 };
 
 render(Counter, document.getElementById('root'));
+```
+
+### Theme Switcher with useRef and Watch
+
+```js
+import { Div, H1, P, Button, useRef, useState, Watch, render } from 'most-js';
+
+const ThemeSwitcher = () => {
+  const [theme, setTheme] = useState('light');
+  const appRef = useRef('app-container');
+  const headingRef = useRef('main-heading');
+  
+  // Theme configurations
+  const themes = {
+    light: {
+      background: '#ffffff',
+      text: '#333333',
+      heading: '#000000'
+    },
+    dark: {
+      background: '#222222',
+      text: '#eeeeee',
+      heading: '#ffffff'
+    },
+    blue: {
+      background: '#1a2b3c',
+      text: '#f0f0f0',
+      heading: '#89cff0'
+    }
+  };
+  
+  // Apply theme whenever it changes
+  Watch(() => {
+    const currentTheme = themes[theme];
+    appRef.style.backgroundColor = currentTheme.background;
+    appRef.style.color = currentTheme.text;
+    headingRef.style.color = currentTheme.heading;
+  }, [theme]);
+  
+  return Div({ 
+    className: 'theme-switcher',
+    reference: 'app-container'
+  }, [
+    H1({ reference: 'main-heading' }, ["Theme Demonstration"]),
+    P({}, ["Select a theme to see it in action:"]),
+    Div({ className: 'theme-buttons' }, [
+      Button({ 
+        onClick: () => setTheme('light'),
+        className: theme === 'light' ? 'active' : ''
+      }, ["Light"]),
+      Button({ 
+        onClick: () => setTheme('dark'),
+        className: theme === 'dark' ? 'active' : ''
+      }, ["Dark"]),
+      Button({ 
+        onClick: () => setTheme('blue'),
+        className: theme === 'blue' ? 'active' : ''
+      }, ["Blue"])
+    ]),
+    P({}, [`Current theme: ${theme}`])
+  ]);
+};
+
+render(ThemeSwitcher, document.getElementById('root'));
 ```
 
 ### Todo List
@@ -487,19 +561,33 @@ render(TodoApp, document.getElementById('root'));
 1. **Component Organization**
    * Keep components focused on a single responsibility
    * Place related state in the most appropriate component
+   * Create reusable components for UI elements that appear in multiple places
 2. **Performance Optimization**
    * Use `Watch` with specific dependencies to minimize unnecessary re-renders
    * Avoid deep nesting of components when possible
+   * Use the creation-components for better readability and consistency
+   * Implement memoization for expensive operations
 3. **State Management**
    * Keep state as local as possible
    * Use props to pass data down to child components
    * Consider state lifting for shared state between siblings
+   * Use composition to avoid prop drilling through many component layers
 4. **References**
    * Use references only when direct DOM manipulation is necessary
    * Give meaningful, unique IDs to references
+   * Clean up event listeners and subscriptions when components unmount
 5. **Virtual DOM Usage**
    * Understand that MostJS uses a virtual DOM to optimize real DOM updates
    * Each state change triggers a re-render of the component and its children
+   * Group related state updates together to avoid multiple re-renders
+6. **Code Organization**
+   * Split your application into logical modules
+   * Keep related files together
+   * Use consistent naming conventions for components, files, and functions
+7. **Error Handling**
+   * Implement error boundaries for graceful failure handling
+   * Provide meaningful error messages and fallback UI
+   * Use try/catch blocks for operations that might fail
 
 ## Under the Hood
 
@@ -509,4 +597,96 @@ MostJS uses a virtual DOM approach to efficiently update the real DOM. When stat
 2. It's compared with the previous virtual DOM using a diffing algorithm
 3. Only the necessary changes are applied to the real DOM
 
-This approach minimizes expensive DOM operations while maintaining a simple mental model for developers.re
+This approach minimizes expensive DOM operations while maintaining a simple mental model for developers.
+
+### Deep Equality Checking
+
+MostJS implements deep equality checking for state changes and dependency tracking. This means:
+
+* When `setState` is called, MostJS compares the new value with the old one using deep equality
+* Only if the values are not deeply equal will a re-render be triggered
+* This prevents unnecessary re-renders when reference changes don't affect the actual data
+
+### Component Lifecycle
+
+Although not explicitly exposed as lifecycle methods, MostJS components follow a predictable lifecycle:
+
+1. **Initialization** : Component function is called, states are initialized
+2. **Mounting** : Virtual DOM is created and rendered to the real DOM
+3. **Updating** : Component re-renders when state changes or Watch dependencies update
+4. **Unmounting** : Component is removed from the DOM, resources can be cleaned up
+
+### Diffing Algorithm
+
+The diffing algorithm follows these priorities to minimize DOM operations:
+
+1. Compare node types
+2. Compare element attributes and event listeners
+3. Compare child nodes recursively
+4. Apply the minimum set of changes to transform the old DOM into the new one
+
+## Advanced Topics
+
+### Custom Creation Components
+
+You can create your own creation components for frequently used elements:
+
+```js
+import { jsx } from 'most-js';
+
+export function Card(props = {}, children = []) {
+  const cardProps = {
+    ...props,
+    className: `card ${props.className || ''}`
+  };
+  return jsx('div', cardProps, children);
+}
+
+// Usage
+import { Card, H3, P } from 'most-js';
+
+const ProductCard = (props) => {
+  return Card({ className: 'product-card' }, [
+    H3({}, [props.title]),
+    P({}, [props.description])
+  ]);
+};
+```
+
+### Component Composition
+
+MostJS encourages composition to build complex UIs from simple components:
+
+```js
+import { Div, useState } from 'most-js';
+
+// Base components
+const Header = (props) => {
+  return Div({ className: 'header' }, props.children);
+};
+
+const Content = (props) => {
+  return Div({ className: 'content' }, props.children);
+};
+
+const Footer = (props) => {
+  return Div({ className: 'footer' }, props.children);
+};
+
+// Composed application
+const App = () => {
+  const [user, setUser] = useState({ name: 'Guest' });
+  
+  return Div({ className: 'app' }, [
+    Header({}, [
+      `Welcome, ${user.name}`
+    ]),
+    Content({}, [
+      "Main content goes here"
+    ]),
+    Footer({}, [
+      "© 2025 MostJS"
+    ])
+  ]);
+};
+```

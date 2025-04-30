@@ -5,13 +5,19 @@ const componentStates = new Map();
 const componentIndexes = new Map();
 
 function useState(initial) {
-  if (!componentStates.has(currentComponent)) {
-    componentStates.set(currentComponent, { states: [], vdom: null });
+  for (let sfd of componentStates.values()) {
+    console.log(sfd);
+  }
+  console.log("call to useState");
+  const component = currentComponent.component;
+  console.log(component);
+  if (!componentStates.has(component)) {
+    componentStates.set(component, { states: [], vdom: null });
   }
 
-  const componentState = componentStates.get(currentComponent);
+  const componentState = componentStates.get(component);
   const states = componentState.states;
-  const idx = componentIndexes.get(currentComponent) || 0;
+  const idx = componentIndexes.get(component) || 0;
 
   if (states[idx] === undefined) {
     states[idx] = typeof initial === "function" ? initial() : initial;
@@ -20,12 +26,14 @@ function useState(initial) {
   const localIndex = idx;
 
   const setState = (value) => {
+    console.log("call to setState");
+    console.log(states);
     const oldValue = states[localIndex];
     const newValue = typeof value === "function" ? value(oldValue) : value;
     if (Array.isArray(states[localIndex]) && Array.isArray(newValue)) {
       if (!areDepsEqual(newValue, oldValue)) {
         states[localIndex] = newValue;
-        rerender(currentComponent);
+        rerender(component);
       }
       return;
     }
@@ -33,17 +41,17 @@ function useState(initial) {
     if (isPlainObject(states[localIndex]) && isPlainObject(newValue)) {
       if (!shallowEqualObjects(newValue, oldValue)) {
         states[localIndex] = newValue;
-        rerender(currentComponent);
+        rerender(component);
       }
       return;
     }
     if (oldValue !== newValue) {
       states[localIndex] = newValue;
-      rerender(currentComponent);
+      rerender(component);
     }
   };
 
-  componentIndexes.set(currentComponent, idx + 1);
+  componentIndexes.set(component, idx + 1);
   return [states[localIndex], setState];
 }
 
