@@ -7,13 +7,17 @@ class Router {
     this.currentQuery = {};
     this.history = [];
     this.currentIndex = -1;
+    this.initialized = false;
 
     window.addEventListener("popstate", this._onPopState.bind(this));
-    this.start();
+    
   }
 
-  // Register route like "/user/:id"
+  
   register(path, handler) {
+    if (!this.initialized) {
+      this.initialized = true;
+    }
     const paramNames = [];
     const regex = path.replace(/:([^/]+)/g, (_, name) => {
       paramNames.push(name);
@@ -28,7 +32,7 @@ class Router {
     });
   }
 
-  // Push a new route like React Router
+  
   push(path) {
     const [pathname, queryStr] = path.split("?");
     const query = this._parseQuery(queryStr || "");
@@ -44,8 +48,8 @@ class Router {
     this.history = this.history.slice(0, this.currentIndex + 1);
     this.history.push(state);
     this.currentIndex++;
-
-    this._render(match, query);
+    console.log("rendering...", match);
+    render(match.path, match.handler);
   }
 
   _onPopState(event) {
@@ -58,8 +62,10 @@ class Router {
 
     const index = this.history.findIndex((s) => s.id === state.id);
     this.currentIndex = index;
+    console.log("match",match);
 
-    if (match) this._render(match, query);
+    if (match) render(match.path, match.handler);
+    else console.warn(`Route not found: ${pathname}`);
   }
 
   _matchRoute(pathname) {
@@ -70,6 +76,7 @@ class Router {
         route.paramNames.forEach((name, i) => {
           params[name] = match[i + 1];
         });
+        this.currentParams = params;
         return { ...route, params };
       }
     }
@@ -77,40 +84,43 @@ class Router {
   }
 
   _parseQuery(queryStr) {
-    const params = {};
-    new URLSearchParams(queryStr).forEach((v, k) => {
-      params[k] = v;
-    });
-    return params;
-  }
+    this.currentQuery = Object.fromEntries(new URLSearchParams(queryStr).entries());
+    return this.currentQuery;
+}
 
-  _render(match, query) {
-    this.currentParams = match.params;
-    this.currentQuery = query;
-    render(match.path, match.handler);
-  }
 
   start() {
-    const path = window.location.pathname + window.location.search;
-    const [pathname, queryStr] = path.split("?");
+    const path = window.location.pathname;
+    const queryStr = window.location.search;
+    console.log("pathname in start",path);
+    console.log("queryStr",queryStr);
     const query = this._parseQuery(queryStr || "");
-    const match = this._matchRoute(pathname);
+    const match = this._matchRoute(path);
 
-    const state = { path, id: Date.now() };
-    history.replaceState(state, "", path);
+    const state = { path, queryStr, id: Date.now() };
+    history.replaceState(state, "", path + queryStr);
     this.history.push(state);
     this.currentIndex = 0;
 
-    if (match) this._render(match, query);
+    if (match){
+      console.log(match);
+    console.log("rendering...", match);
+
+      render(match.path, match.handler, {});
+      console.log("match Handler",match.handler);
+    }else {
+      console.log()
+      console.log("no match");
+    }
   }
 
-  // Hook-like accessors
+  
   useParams() {
-    return { ...this.currentParams };
+    return this.currentParams || {};
   }
 
   useQuery() {
-    return { ...this.currentQuery };
+    return this.currentQuery || {};
   }
 }
 

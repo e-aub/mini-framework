@@ -8,7 +8,6 @@ import { refs } from "./useRef.js";
 const titleToComponentMap = new Map();
 
 
-
 function jsx(tag, props, ...children) {
   const processedChildren = children.flat().map((child) => {
     if (typeof child === "string" || typeof child === "number") {
@@ -77,8 +76,7 @@ function createElement(node) {
   return element;
 }
 
-function render(componentTitle, componentFn, props) {
-  
+function render(componentTitle, componentFn, props={}) {
   let rootElement = document.getElementById("root");
   if (!rootElement) {
     rootElement = document.createElement("div");
@@ -115,7 +113,6 @@ function render(componentTitle, componentFn, props) {
   
   
   rootElement.appendChild(element);
-  
   return element;
 }
 

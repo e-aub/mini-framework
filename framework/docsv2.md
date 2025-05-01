@@ -316,64 +316,8 @@ const ThemeToggle = () => {
 
 MostJS provides a simple routing solution for single-page applications. The routing system allows you to create a single-page application with multiple views.
 
-```js
-import { Router, Route } from 'most-js';
+if you used router now need to do render to any component the router will map the router to its component and render
 
-const App = () => {
-  return Router({}, [
-    Route({ path: '/', component: Home }),
-    Route({ path: '/about', component: About }),
-    Route({ path: '/contact', component: Contact }),
-    // You can also use parameters in routes
-    Route({ path: '/users/:id', component: UserProfile })
-  ]);
-};
-```
-
-The router automatically handles navigation between routes without page reloads. The Route component accepts the following properties:
-
-* `path`: The URL path pattern to match
-* `component`: The component to render when the path matches
-* `exact` (optional): If true, the path must match exactly
-
-#### Accessing Route Parameters
-
-When using parameterized routes like `/users/:id`, you can access the parameters in your component:
-
-```js
-import { Div, H1, P, useParams } from 'most-js';
-
-const UserProfile = () => {
-  const params = useParams();
-  
-  return Div({ className: 'user-profile' }, [
-    H1({}, [`User Profile: ${params.id}`]),
-    P({}, ["User details go here..."])
-  ]);
-};
-```
-
-#### Navigation Between Routes
-
-To navigate between routes programmatically:
-
-```js
-import { Div, Button, navigate } from 'most-js';
-
-const Navigation = () => {
-  return Div({ className: 'navigation' }, [
-    Button({ 
-      onClick: () => navigate('/') 
-    }, ["Home"]),
-    Button({ 
-      onClick: () => navigate('/about') 
-    }, ["About"]),
-    Button({ 
-      onClick: () => navigate('/contact') 
-    }, ["Contact"])
-  ]);
-};
-```
 
 ## API Reference
 
@@ -690,3 +634,5 @@ const App = () => {
   ]);
 };
 ```
+
+
