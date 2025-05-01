@@ -1,13 +1,13 @@
 import { componentIndexes, componentStates } from "./state.js";
+import  componentStack from "./componentStack.js";
 import { diff } from "./diff.js";
 import { applyCallbacksAfterRender } from "./watch.js";
 import { refs } from "./useRef.js";
 
-export let currentComponent = {component: null};
+
 const titleToComponentMap = new Map();
 
 
-const root = document.getElementById("root");
 
 function jsx(tag, props, ...children) {
   const processedChildren = children.flat().map((child) => {
@@ -77,58 +77,133 @@ function createElement(node) {
   return element;
 }
 
-function render(componentFn, props) {
-  const title = "root";
-  currentComponent.component = title;
-
-  if (!componentStates.has(componentFn)) {
-    componentStates.set(componentFn, { states: [], vdom: null });
-  }
-  componentIndexes.set(componentFn, 0);
-
-  const vdom = Component(componentFn, props, title);
-  const componentState = componentStates.get(title);
-
-  if (!componentState.vdom) {
-    root.innerHTML = "";
-    const domNode = createElement(vdom);
-    root.appendChild(domNode);
-    componentState.vdom = vdom;
+function render(componentTitle, componentFn, props) {
+  
+  let rootElement = document.getElementById("root");
+  if (!rootElement) {
+    rootElement = document.createElement("div");
+    rootElement.id = "root";
+    document.body.appendChild(rootElement);
   } else {
-    diff(componentState.vdom, vdom);
+    
+    rootElement.innerHTML = "";
   }
-  applyCallbacksAfterRender();
+  
+  
+  if (!componentStates.has(componentTitle)) {
+    componentStates.set(componentTitle, { states: [], vdom: null });
+  }
+  
+  
+  titleToComponentMap.set(componentTitle, componentFn);
+  
+  
+  componentIndexes.set(componentTitle, 0);
+  
+  
+  componentStack.push(componentTitle);
+  const vdom = componentFn(props);
+  const element = createElement(vdom);
+  vdom.ref = element;
+  
+  
+  const componentState = componentStates.get(componentTitle);
+  componentState.vdom = vdom;
+  componentStates.set(componentTitle, componentState);
+  componentStack.pop();
+  
+  
+  rootElement.appendChild(element);
+  
+  return element;
 }
 
-function rerender(componentFn) {
-  console.log("rerendering .................", componentFn);
-  currentComponent.component = componentFn;
-  componentIndexes.set(componentFn, 0);
 
-  const vdom = titleToComponentMap.get(componentFn)();
-
-  const componentState = componentStates.get(componentFn);
+function rerender(componentTitle) {
+  
+  const componentFn = titleToComponentMap.get(componentTitle);
+  if (!componentFn) {
+    console.error(`Component function not found for ${componentTitle}`);
+    return;
+  }
+  
+  
+  componentIndexes.set(componentTitle, 0);
+  
+  
+  const componentState = componentStates.get(componentTitle);
+  console.log("componentState for ",componentTitle," : ",componentState);
+  if (!componentState) {
+    console.error(`Component state not found for ${componentTitle}`);
+    return;
+  }
+  
+  
   const oldVdom = componentState.vdom;
-
+  if (!oldVdom) {
+    console.error(`Invalid vdom for component ${componentTitle}`);
+    return;
+  }
+  
+  
+  componentStack.push(componentTitle);
+  const vdom = componentFn();
+  
+  
+  
+  
   diff(oldVdom, vdom);
+  console.error("oldVdom for ",componentTitle," : ",oldVdom, "and newVdom : ",vdom);
+  componentState.vdom = vdom;
+  
+  
   applyCallbacksAfterRender();
+  
+  
+  componentStack.pop();
 }
+
 
 function Component(componentFn, props, title) {
-  currentComponent.component = title;
-  titleToComponentMap.set(title, componentFn);
-  if (!componentIndexes.has(title)) {
-    componentIndexes.set(title, 0);
+  if (!title) {
+    console.error("Component must have a title");
+    return null;
   }
-  const vdom = titleToComponentMap.get(title)(props);
+  
+  
+  titleToComponentMap.set(title, () => componentFn(props));
+  
+  
+  componentIndexes.set(title, 0);
+  
+  
   if (!componentStates.has(title)) {
     componentStates.set(title, { states: [], vdom: null });
-  }else{
-    componentStates.get(title).vdom = vdom;
   }
-  console.log(vdom);
-  return vdom;
+  
+  
+  componentStack.push(title);
+  
+  try {
+    
+    const vdom = componentFn(props);
+    
+    
+    componentStates.get(title).vdom = vdom;
+    
+    
+    vdom.componentTitle = title;
+    
+    return vdom;
+  } catch (error) {
+    console.error(`Error rendering component ${title}:`, error);
+    return null;
+  } finally {
+    
+    componentStack.pop();
+  }
 }
+
 
 
 export { jsx, render, createElement, rerender, Component };

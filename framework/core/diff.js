@@ -1,8 +1,10 @@
 import { createElement } from "./dom.js";
+import { componentStates } from "./state.js";
+import componentStack from "./componentStack.js";
 
 function diff(oldVNode, newVNode) {
   if (!oldVNode || !newVNode) return;
-  const parentEl = oldVNode.ref;
+  const parentEl = oldVNode.ref
   const oldChildren = oldVNode.children || [];
   const newChildren = newVNode.children || [];
 
@@ -74,7 +76,10 @@ function diff(oldVNode, newVNode) {
     }
   });
 
-  oldVNode.children = newVNode.children;
+  newVNode.ref = oldVNode.ref;
+
+  const currentComponent = componentStack.current;
+  componentStates.get(currentComponent).vdom = { newVNode };
 }
 
 function patchElement(oldVNode, newVNode) {

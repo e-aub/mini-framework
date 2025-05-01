@@ -1,4 +1,4 @@
-import { currentComponent as cComp } from "./dom.js";
+import componentStack from "./componentStack.js";
 
 let oldDependencies = new Map();
 let cleanupFunctions = new Map()
@@ -45,7 +45,9 @@ export function areDepsEqual(newDeps, oldDeps) {
 }
 
 export function Watch(callback, deps = null) {
-    const currentComponent = cComp;
+    const currentComponent = componentStack.current;
+  console.log("this is current component",currentComponent);
+
 
     if (!afterRenderEffects.has(currentComponent)) {
         afterRenderEffects.set(currentComponent, []);
@@ -98,9 +100,11 @@ export function Watch(callback, deps = null) {
 
 
 export function applyCallbacksAfterRender() {
-    const currentAfterRenderEffects = afterRenderEffects.get(cComp);
+    const currentComponent = componentStack.current;
+    console.log("this is current component",currentComponent);
+    const currentAfterRenderEffects = afterRenderEffects.get(currentComponent);
 
-    afterRenderEffects.set(cComp, []);
+    afterRenderEffects.set(currentComponent, []);
 
     // Use requestAnimationFrame to ensure DOM is ready
     requestAnimationFrame(() => {
@@ -109,7 +113,7 @@ export function applyCallbacksAfterRender() {
                 try {
                     const result = callback();
                     if (typeof result === "function") {
-                        cleanupFunctions.set(cComp, result);
+                        cleanupFunctions.set(currentComponent, result);
                     }
                 } catch (error) {
                     console.error("Error in effect:", error);

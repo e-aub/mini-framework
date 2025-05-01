@@ -14,30 +14,61 @@
         // useState()
         const root = document.getElementById('root');
 
-        const test = () => {
+        // const test = () => {
             
+        //     const [count, setCount] = useState(0);
+            
+        //     return Div({
+        //         className: 'test'
+        //     },[
+        //     P({
+        //         className: 'count'
+        //     }, [count]),
+        //     Button({
+        //         onClick: () => setCount(count + 1)
+        //     }, ["add"])
+        //     ])
+        // }
+        // const app = () => {
+        //     const [trigger, setTrigger] = useState(false);
+        //     return Div({
+        //         className: 'app'
+        //     }, [Component(test, {}, "test-1"), Component(test, {}, "test-2"), Button({
+        //         onClick: () => setTrigger(!trigger)
+        //     }, ["trigger"])])
+        // }
+
+        function Test () {
             const [count, setCount] = useState(0);
-            
             return Div({
                 className: 'test'
-            },[
-            P({
-                className: 'count'
-            }, [count]),
-            Button({
-                onClick: () => setCount(count + 1)
-            }, ["add"])
+            }, [
+                P({
+                    className: 'count'
+                }, [count]),
+                Button({
+                    onClick: () => setCount(count + 1)
+                }, ["add"])
             ])
         }
-        const app = () => {
-            const [trigger, setTrigger] = useState(false);
+
+        function App() {
+            const [count, setCount] = useState(0);
             return Div({
                 className: 'app'
-            }, [Component(test, {}, "test-1"), Component(test, {}, "test-2"), Button({
-                onClick: () => setTrigger(!trigger)
-            }, ["trigger"])])
+            }, [
+                P({
+                    className: 'count'
+                }, [count]),
+                Button({
+                    onClick: () => setCount(count + 1)
+                }, ["add"]),
+                Component(Test, {}, "test-1"),
+                Component(Test, {}, "test-2")
+            ])
         }
-        render(app);
+      
+        render("app", App, {});
     </script>
 </body>
 

@@ -1,16 +1,19 @@
-import { currentComponent, rerender } from "./dom.js";
+// Fixed state.js
+import { rerender } from "./dom.js";
 import { shallowEqualObjects, areDepsEqual, isPlainObject } from "./watch.js";
+import componentStack from "./componentStack.js";
 
 const componentStates = new Map();
 const componentIndexes = new Map();
 
 function useState(initial) {
-  for (let sfd of componentStates.values()) {
-    console.log(sfd);
+  const component = componentStack.current;
+  
+  if (!component) {
+    console.error("useState called outside component context");
+    return [initial, () => {}];
   }
-  console.log("call to useState");
-  const component = currentComponent.component;
-  console.log(component);
+  
   if (!componentStates.has(component)) {
     componentStates.set(component, { states: [], vdom: null });
   }
@@ -19,42 +22,58 @@ function useState(initial) {
   const states = componentState.states;
   const idx = componentIndexes.get(component) || 0;
 
+  // Initialize state if needed
   if (states[idx] === undefined) {
     states[idx] = typeof initial === "function" ? initial() : initial;
   }
 
   const localIndex = idx;
+  const componentTitle = component; // Store component title for closure
 
   const setState = (value) => {
-    console.log("call to setState");
-    console.log(states);
-    const oldValue = states[localIndex];
+    // Make sure we're updating the correct component's state
+    const targetComponentState = componentStates.get(componentTitle);
+    if (!targetComponentState) {
+      console.error(`Component state not found for ${componentTitle}`);
+      return;
+    }
+    
+    const oldValue = targetComponentState.states[localIndex];
     const newValue = typeof value === "function" ? value(oldValue) : value;
-    if (Array.isArray(states[localIndex]) && Array.isArray(newValue)) {
+    
+    let shouldRerender = false;
+    
+    // Compare arrays
+    if (Array.isArray(oldValue) && Array.isArray(newValue)) {
       if (!areDepsEqual(newValue, oldValue)) {
-        states[localIndex] = newValue;
-        rerender(component);
+        targetComponentState.states[localIndex] = newValue;
+        shouldRerender = true;
       }
-      return;
     }
-
-    if (isPlainObject(states[localIndex]) && isPlainObject(newValue)) {
+    // Compare objects
+    else if (isPlainObject(oldValue) && isPlainObject(newValue)) {
       if (!shallowEqualObjects(newValue, oldValue)) {
-        states[localIndex] = newValue;
-        rerender(component);
+        targetComponentState.states[localIndex] = newValue;
+        shouldRerender = true;
       }
-      return;
     }
-    if (oldValue !== newValue) {
-      states[localIndex] = newValue;
-      rerender(component);
+    // Compare primitives
+    else if (oldValue !== newValue) {
+      targetComponentState.states[localIndex] = newValue;
+      shouldRerender = true;
+    }
+    
+    // Trigger rerender if needed
+    if (shouldRerender) {
+      // Use setTimeout for batching updates
+      setTimeout(() => {
+        rerender(componentTitle);
+      }, 0);
     }
   };
 
   componentIndexes.set(component, idx + 1);
   return [states[localIndex], setState];
 }
-
-
 
 export { useState, componentStates, componentIndexes };

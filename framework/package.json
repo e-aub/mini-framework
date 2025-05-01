@@ -1,6 +1,6 @@
 {
   "name": "@hacker_man/most-js",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "a simple javascript frontend framework",
   "main": "index.js",
   "scripts": {
