@@ -87,6 +87,7 @@ function render(componentTitle, componentFn, props) {
   } else {
     
     rootElement.innerHTML = "";
+    
   }
   
   

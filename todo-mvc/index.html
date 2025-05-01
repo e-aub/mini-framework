@@ -10,7 +10,7 @@
 <body>
     <div id="root"></div>
     <script type="module">
-        import { jsx, render, useState, Div, P, Button, Component } from '../framework/index.js';
+        import { jsx, render, useState, Div, P, Button, Component, Link, router } from '../framework/index.js';
         // useState()
         const root = document.getElementById('root');
 
@@ -38,11 +38,38 @@
         //     }, ["trigger"])])
         // }
 
+        router.register(
+            "/", App
+        );
+
+        router.register(
+            "/test", Test
+        );
+
+        router.register(
+            "/test/:id", dynamic
+        );
+
+
+        function dynamic () {
+            const id = router.useParams().id;
+            return Div({
+                className: 'dynamic'
+            }, [
+                P({
+                    className: 'id'
+                }, [id])
+            ])
+        }
+
         function Test () {
             const [count, setCount] = useState(0);
             return Div({
                 className: 'test'
             }, [
+                Link({
+                    href: '/'
+                }, ["link"]),
                 P({
                     className: 'count'
                 }, [count]),
@@ -51,12 +78,15 @@
                 }, ["add"])
             ])
         }
-
+        
         function App() {
             const [count, setCount] = useState(0);
             return Div({
                 className: 'app'
             }, [
+                Link({
+                    href: `/test/${count}`
+                }, ["link to test dynamic"]),
                 P({
                     className: 'count'
                 }, [count]),

@@ -1,4 +1,5 @@
 import { jsx } from "./dom.js";
+import router from "./router.js";
 export function Button(props = {}, children = []) {
   return jsx("button", props, children);
 }
@@ -13,10 +14,6 @@ export function Ul(props = {}, children = []) {
 
 export function Li(props = {}, children = []) {
   return jsx("li", props, children);
-}
-
-export function Link(props = {}, children = []) {
-  return jsx("a", props, children);
 }
 
 export function H1(props = {}, children = []) {
@@ -53,6 +50,14 @@ export function P(props = {}, children = []) {
 
 export function Span(props = {}, children = []) {
   return jsx("span", props, children);
+}
+
+export function Link(props = {}, children = []) {
+  props["onClick"] = (e) => {
+    e.preventDefault();
+    router.push(props.href);
+  }
+  return jsx("a", props, children);
 }
 
 export function ErrorBoundary({ fallback, children }) {
