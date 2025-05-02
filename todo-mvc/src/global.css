@@ -554,6 +554,10 @@ li.selected {
     cursor: pointer;
 }
 
+.warning {
+    color: #e74c3c;
+}
+
 @media (min-width:899px) {
     body {
         padding-left: 300px;

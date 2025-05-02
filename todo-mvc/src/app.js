@@ -1,4 +1,4 @@
-import { useState, Div, P, Button, Component, Link, router, Aside, Header,H1, H3,H4, H5, Span, Hr,Main, Blockquote, Footer, Ul, Li, Section, Label, Input } from '/framework/index.js';
+import { useState, Div, P, Button, Component, Link, router, Aside, Header,H1, H3,H4, H5, Span, Hr,Main, Blockquote, Footer, Ul, Li, Section, Label, Input } from 'https://cdn.jsdelivr.net/npm/@hacker_man/most-js@1.1.0/index.js';
 
 const AsideComponent = () => {
   return Aside({className: "about"}, [
@@ -144,7 +144,8 @@ const App = () => {
         localStorage.removeItem('todos');
         router.reload();
       }
-    }, "Reset")
+    }, "Reset"),
+    P({className: "warning"}, "History will only be accessible in the browser where it was saved. If you use a different browser, a new, independent history will be created there.")
   ])
 }
 
