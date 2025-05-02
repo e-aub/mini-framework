@@ -104,7 +104,6 @@ export function applyCallbacksAfterRender() {
 
     afterRenderEffects.set(currentComponent, []);
 
-    // Use requestAnimationFrame to ensure DOM is ready
     requestAnimationFrame(() => {
         if (currentAfterRenderEffects) {
             currentAfterRenderEffects.forEach((callback) => {

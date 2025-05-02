@@ -22,16 +22,16 @@ function useState(initial) {
   const states = componentState.states;
   const idx = componentIndexes.get(component) || 0;
 
-  // Initialize state if needed
+ 
   if (states[idx] === undefined) {
     states[idx] = typeof initial === "function" ? initial() : initial;
   }
 
   const localIndex = idx;
-  const componentTitle = component; // Store component title for closure
+  const componentTitle = component;
 
   const setState = (value) => {
-    // Make sure we're updating the correct component's state
+   
     const targetComponentState = componentStates.get(componentTitle);
     if (!targetComponentState) {
       console.error(`Component state not found for ${componentTitle}`);
@@ -43,7 +43,7 @@ function useState(initial) {
     
     let shouldRerender = false;
     
-    // Compare arrays
+   
     if (Array.isArray(oldValue) && Array.isArray(newValue)) {
       if (oldValue.length !== newValue.length) {
         targetComponentState.states[localIndex] = newValue;
@@ -54,22 +54,22 @@ function useState(initial) {
         shouldRerender = true;
       }
     }
-    // Compare objects
+   
     else if (isPlainObject(oldValue) && isPlainObject(newValue)) {
       if (!shallowEqualObjects(newValue, oldValue)) {
         targetComponentState.states[localIndex] = newValue;
         shouldRerender = true;
       }
     }
-    // Compare primitives
+   
     else if (oldValue !== newValue) {
       targetComponentState.states[localIndex] = newValue;
       shouldRerender = true;
     }
     
-    // Trigger rerender if needed
+   
     if (shouldRerender) {
-      // Use setTimeout for batching updates
+     
       setTimeout(() => {
         rerender(componentTitle);
       }, 0);

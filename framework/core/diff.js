@@ -47,7 +47,7 @@ function diff(oldVNode, newVNode) {
       const oldChild = oldChildren[matchIndex];
       patchElement(oldChild, newChild);
       if (newChild.tag || newChild.type) {
-        diff(oldChild, newChild); // recurse
+        diff(oldChild, newChild);
       }
       matchedOld.add(matchIndex);
 

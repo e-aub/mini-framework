@@ -387,7 +387,7 @@ const ThemeSwitcher = () => {
   const appRef = useRef('app-container');
   const headingRef = useRef('main-heading');
   
-  // Theme configurations
+ 
   const themes = {
     light: {
       background: '#ffffff',
@@ -406,7 +406,7 @@ const ThemeSwitcher = () => {
     }
   };
   
-  // Apply theme whenever it changes
+ 
   Watch(() => {
     const currentTheme = themes[theme];
     appRef.style.backgroundColor = currentTheme.background;
