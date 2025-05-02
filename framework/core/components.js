@@ -1,55 +1,55 @@
-import { jsx } from "./dom.js";
+import { Create } from "./dom.js";
 import router from "./router.js";
 export function Button(props = {}, children = []) {
-  return jsx("button", props, children);
+  return Create("button", props, children);
 }
 
 export function Div(props = {}, children = []) {
-  return jsx("div", props, children);
+  return Create("div", props, children);
 }
 
 export function Ul(props = {}, children = []) {
-  return jsx("ul", props, children);
+  return Create("ul", props, children);
 }
 
 export function Li(props = {}, children = []) {
-  return jsx("li", props, children);
+  return Create("li", props, children);
 }
 
 export function H1(props = {}, children = []) {
-  return jsx("h1", props, children);
+  return Create("h1", props, children);
 }
 
 export function H2(props = {}, children = []) {
-  return jsx("h2", props, children);
+  return Create("h2", props, children);
 }
 
 export function H3(props = {}, children = []) {
-  return jsx("h3", props, children);
+  return Create("h3", props, children);
 }
 
 export function H4(props = {}, children = []) {
-  return jsx("h4", props, children);
+  return Create("h4", props, children);
 }
 
 export function H5(props = {}, children = []) {
-  return jsx("h5", props, children);
+  return Create("h5", props, children);
 }
 
 export function H6(props = {}, children = []) {
-  return jsx("h6", props, children);
+  return Create("h6", props, children);
 }
 
 export function Input(props = {}, children = []) {
-  return jsx("input", props, children);
+  return Create("input", props, children);
 }
 
 export function P(props = {}, children = []) {
-  return jsx("p", props, children);
+  return Create("p", props, children);
 }
 
 export function Span(props = {}, children = []) {
-  return jsx("span", props, children);
+  return Create("span", props, children);
 }
 
 function getOrigin(url) {
@@ -93,39 +93,39 @@ export function Link(props = {}, children = [], render = true) {
     }
     router.push(props.href);
   }
-  return jsx("a", props, children);
+  return Create("a", props, children);
 }
 
 export function Aside(props = {}, children = []) {
-  return jsx("aside", props, children);
+  return Create("aside", props, children);
 }
 
 export function Header(props = {}, children = []) {
-  return jsx("header", props, children);
+  return Create("header", props, children);
 }
 
 export function Hr(props = {}, children = []) {
-  return jsx("hr", props, children);
+  return Create("hr", props, children);
 }
 
 export function Blockquote(props = {}, children = []) {
-  return jsx("blockquote", props, children);
+  return Create("blockquote", props, children);
 }
 
 export function Footer(props = {}, children = []) {
-  return jsx("footer", props, children);
+  return Create("footer", props, children);
 }
 
 export function Section(props = {}, children = []) {
-  return jsx("section", props, children);
+  return Create("section", props, children);
 }
 
 export function Label(props = {}, children = []) {
-  return jsx("label", props, children);
+  return Create("label", props, children);
 }
 
 export function Main(props = {}, children = []) {
-  return jsx("main", props, children);
+  return Create("main", props, children);
 }
 export function ErrorBoundary({ fallback, children }) {
   try {
@@ -134,6 +134,6 @@ export function ErrorBoundary({ fallback, children }) {
     console.error("Error in component:", error);
     return typeof fallback === "function"
       ? fallback(error)
-      : jsx("div", { className: "error" }, "Something went wrong");
+      : Create("div", { className: "error" }, "Something went wrong");
   }
 }

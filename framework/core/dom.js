@@ -8,7 +8,7 @@ import { refs } from "./useRef.js";
 const titleToComponentMap = new Map();
 
 
-function jsx(tag, props, ...children) {
+function Create(tag, props, ...children) {
   const processedChildren = children.flat().map((child) => {
     if (typeof child === "string" || typeof child === "number") {
       return {
@@ -203,4 +203,4 @@ function Component(componentFn, props, title) {
 
 
 
-export { jsx, render, createElement, rerender, Component };
+export { Create, render, createElement, rerender, Component };
