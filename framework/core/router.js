@@ -8,6 +8,7 @@ class Router {
     this.history = [];
     this.currentIndex = -1;
     this.initialized = false;
+    this.ownDomain = window.location.origin;
 
     window.addEventListener("popstate", this._onPopState.bind(this));
     

@@ -52,12 +52,46 @@ export function Span(props = {}, children = []) {
   return jsx("span", props, children);
 }
 
+function getOrigin(url) {
+  try {
+    if (url.startsWith("/") || url.startsWith("#")) {
+      return router.origin;
+    }
+    return new URL(url).origin;
+  } catch (e) {
+    console.error("Invalid URL");
+    return null;
+  }
+}
+
 export function Link(props = {}, children = []) {
+  if (!props.href) {
+    console.error("Link must have a href");
+    return null;
+  }
+
+  if (getOrigin(props.href) !== router.origin) {
+    props.target = "_blank";
+  }
+
   props["onClick"] = (e) => {
+    if (e.target.target) {
+      if (e.target.target === "_blank") {
+        return
+      };
+    }
     e.preventDefault();
     router.push(props.href);
   }
   return jsx("a", props, children);
+}
+
+export function Aside(props = {}, children = []) {
+  return jsx("aside", props, children);
+}
+
+export function Header(props = {}, children = []) {
+  return jsx("header", props, children);
 }
 
 export function ErrorBoundary({ fallback, children }) {

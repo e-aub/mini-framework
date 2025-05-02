@@ -21,5 +21,6 @@ func main() {
 	})
 
 	http.Handle("/framework/", http.StripPrefix("/framework", (http.FileServer(http.Dir("./framework")))))
+	http.Handle("/assets/", http.StripPrefix("/assets", (http.FileServer(http.Dir("./todo-mvc")))))
 	http.ListenAndServe(":8000", nil)
 }
