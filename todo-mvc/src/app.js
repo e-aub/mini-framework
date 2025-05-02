@@ -115,8 +115,8 @@ export const todoApp = () => {
 
 const App = () => {
   return Div({ className: 'app' }, [
-    AsideComponent(),
-    todoApp(),
+    Component(AsideComponent, {}, "aside"),
+    Component(todoApp, {}, "todo-app")
   ])
 }
 
