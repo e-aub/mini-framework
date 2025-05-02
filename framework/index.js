@@ -1,4 +1,3 @@
-// Import necessary parts of your framework
 import { jsx, render } from "./core/dom.js";
 import { Button, Div, Ul, Li, Link, H1, H2, H3, H4, H5, H6, Input, P, Span,Aside, Header, Hr, Blockquote , Footer, Section, Label, Main} from "./core/components.js";
 import  router  from "./core/router.js";

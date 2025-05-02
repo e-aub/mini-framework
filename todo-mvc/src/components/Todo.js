@@ -1,6 +1,4 @@
-import { Div, H1, Input, Button, Ul, Li, Section, Header,Label, Main, Footer, Span, Link } from '/framework/index.js';
-import { useState } from '/framework/index.js';
-import { router } from '/framework/index.js';
+import { Div, H1, Input, Button, Ul, Li, Section, Header,Label, Main, Footer, Span, Link, useState, router } from 'https://cdn.jsdelivr.net/npm/@hacker_man/most-js@1.3.0/index.js';
 
 
 

@@ -8,7 +8,7 @@ import (
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fileContent, err := os.ReadFile("./todo-mvc/index.html")
+		fileContent, err := os.ReadFile("./src/index.html")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -21,8 +21,7 @@ func main() {
 		}
 	})
 
-	http.Handle("/framework/", http.StripPrefix("/framework", (http.FileServer(http.Dir("./framework")))))
-	http.Handle("/assets/", http.StripPrefix("/assets", (http.FileServer(http.Dir("./todo-mvc")))))
+	http.Handle("/assets/", http.StripPrefix("/assets", (http.FileServer(http.Dir("./src/")))))
 	fmt.Println("Server running at http://localhost:8000")
 	http.ListenAndServe(":8000", nil)
 }
