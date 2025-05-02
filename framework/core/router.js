@@ -59,7 +59,7 @@ reload() {
 
   if (match) {
     console.log("Reloading route:", match);
-    document.title = match.title; // Optional: update title on reload
+    document.title = match.title; 
     render(match.path, match.handler);
   } else {
     console.warn(`No route match for reload: ${path}`);
@@ -68,10 +68,6 @@ reload() {
 
 
   pushOnly(path) {
-    const [pathname, queryStr] = path.split("?");
-    const query = this._parseQuery(queryStr || "");
-
-
     const state = { path, id: Date.now() };
     history.pushState(state, "", path);
     this.history = this.history.slice(0, this.currentIndex + 1);
