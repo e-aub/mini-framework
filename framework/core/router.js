@@ -53,6 +53,18 @@ class Router {
     render(match.path, match.handler);
   }
 
+  pushOnly(path) {
+    const [pathname, queryStr] = path.split("?");
+    const query = this._parseQuery(queryStr || "");
+
+
+    const state = { path, id: Date.now() };
+    history.pushState(state, "", path);
+    this.history = this.history.slice(0, this.currentIndex + 1);
+    this.history.push(state);
+    this.currentIndex++;
+  }
+
   _onPopState(event) {
     const state = event.state;
     if (!state) return;

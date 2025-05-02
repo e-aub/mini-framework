@@ -45,6 +45,10 @@ function useState(initial) {
     
     // Compare arrays
     if (Array.isArray(oldValue) && Array.isArray(newValue)) {
+      if (oldValue.length !== newValue.length) {
+        targetComponentState.states[localIndex] = newValue;
+        shouldRerender = true;
+      }
       if (!areDepsEqual(newValue, oldValue)) {
         targetComponentState.states[localIndex] = newValue;
         shouldRerender = true;

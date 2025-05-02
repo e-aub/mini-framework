@@ -64,7 +64,7 @@ function getOrigin(url) {
   }
 }
 
-export function Link(props = {}, children = []) {
+export function Link(props = {}, children = [], render = true) {
   if (!props.href) {
     console.error("Link must have a href");
     return null;
@@ -74,6 +74,8 @@ export function Link(props = {}, children = []) {
     props.target = "_blank";
   }
 
+
+
   props["onClick"] = (e) => {
     if (e.target.target) {
       if (e.target.target === "_blank") {
@@ -81,6 +83,14 @@ export function Link(props = {}, children = []) {
       };
     }
     e.preventDefault();
+    if (render === false) {
+      if (getOrigin(props.href) !== router.origin) {
+        console.error(`Link to external domain "${props.href}" is not allowed with render: false`)
+        return null;
+      }
+      router.pushOnly(props.href);
+      return
+    }
     router.push(props.href);
   }
   return jsx("a", props, children);
@@ -94,6 +104,29 @@ export function Header(props = {}, children = []) {
   return jsx("header", props, children);
 }
 
+export function Hr(props = {}, children = []) {
+  return jsx("hr", props, children);
+}
+
+export function Blockquote(props = {}, children = []) {
+  return jsx("blockquote", props, children);
+}
+
+export function Footer(props = {}, children = []) {
+  return jsx("footer", props, children);
+}
+
+export function Section(props = {}, children = []) {
+  return jsx("section", props, children);
+}
+
+export function Label(props = {}, children = []) {
+  return jsx("label", props, children);
+}
+
+export function Main(props = {}, children = []) {
+  return jsx("main", props, children);
+}
 export function ErrorBoundary({ fallback, children }) {
   try {
     return children;
