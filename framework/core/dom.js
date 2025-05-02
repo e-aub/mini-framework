@@ -78,6 +78,7 @@ function createElement(node) {
 
 function render(componentTitle, componentFn, props={}) {
   let rootElement = document.getElementById("root");
+  componentStates.clear();
   if (!rootElement) {
     rootElement = document.createElement("div");
     rootElement.id = "root";

@@ -15,10 +15,7 @@ class Router {
   }
 
   
-  register(path, handler) {
-    if (!this.initialized) {
-      this.initialized = true;
-    }
+  register(path, handler, title = window.location.origin) {
     const paramNames = [];
     const regex = path.replace(/:([^/]+)/g, (_, name) => {
       paramNames.push(name);
@@ -30,6 +27,7 @@ class Router {
       regex: new RegExp(`^${regex}$`),
       handler,
       paramNames,
+      title
     });
   }
 
@@ -50,8 +48,24 @@ class Router {
     this.history.push(state);
     this.currentIndex++;
     console.log("rendering...", match);
+    document.title = match.title;
     render(match.path, match.handler);
   }
+reload() {
+  const path = window.location.pathname;
+  const queryStr = window.location.search;
+  const query = this._parseQuery(queryStr || "");
+  const match = this._matchRoute(path);
+
+  if (match) {
+    console.log("Reloading route:", match);
+    document.title = match.title; // Optional: update title on reload
+    render(match.path, match.handler);
+  } else {
+    console.warn(`No route match for reload: ${path}`);
+  }
+}
+
 
   pushOnly(path) {
     const [pathname, queryStr] = path.split("?");
@@ -117,10 +131,8 @@ class Router {
 
     if (match){
       console.log(match);
-    console.log("rendering...", match);
-
+      document.title = match.title;
       render(match.path, match.handler, {});
-      console.log("match Handler",match.handler);
     }else {
       console.log()
       console.log("no match");
@@ -134,6 +146,10 @@ class Router {
 
   useQuery() {
     return this.currentQuery || {};
+  }
+
+  currentPath() {
+    return this.currentPath || window.location.pathname;
   }
 }
 

@@ -318,7 +318,7 @@ body {
     display: inline
 }
 
-.filters li a {
+.filters li a  {
     border: 1px solid transparent;
     border-radius: 3px;
     color: inherit;
@@ -327,7 +327,7 @@ body {
     text-decoration: none
 }
 
-.filters li a:hover {
+.filters li:hover {
     border-color: #db7676
 }
 
@@ -537,6 +537,14 @@ hr {
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
     perspective: 1000px
+}
+
+li.selected {
+    border: 1px solid #b83f45;
+    border-radius: 3px;
+    color: inherit;
+    margin: 3px;
+    padding: 3px 7px;
 }
 
 @media (min-width:899px) {

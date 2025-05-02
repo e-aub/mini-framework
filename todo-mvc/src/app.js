@@ -25,9 +25,16 @@ const AsideComponent = () => {
 }
 
 export const todoApp = () => {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState(() => {
+    const stored = localStorage.getItem('todos');
+    return stored ? JSON.parse(stored) : [];
+  });
+  
   const [input, setInput] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState(() => {
+    return router.useParams().filter || "all";
+  });
+
   const [invalidInput, setInvalidInput] = useState(false);
 
   function validateInput(input) {
@@ -60,7 +67,12 @@ export const todoApp = () => {
                 return;
               }
               setInvalidInput(false);
-              setTodos([...todos, {text: input, completed: false}]);
+              setTodos(newTodos => {
+                const updated = [...newTodos, { text: input, completed: false }];
+                localStorage.setItem('todos', JSON.stringify(updated));
+                return updated;
+              });
+              
               setInput('');
             }
           },
@@ -79,11 +91,20 @@ export const todoApp = () => {
           return Li({className: `todo-item ${todo.completed ? 'completed' : ''}`, key: todo.text, }, [
             Div({className: "view"}, [
               Input({className: `toggle ${todo.completed ? 'checked' : ''}`, 
-                oninput: (e) => setTodos(todos.map(t => t === todo ? {...t, completed: e.target.checked} : t)),
+                oninput: (e) => setTodos(prev => {
+                  const updated = prev.map(t => t === todo ? { ...t, completed: e.target.checked } : t);
+                  localStorage.setItem('todos', JSON.stringify(updated));
+                  return updated;
+                }),
                 type: "checkbox"}),
               Label({className: "label"}, todo.text),
               Button({className: "destroy", 
-                onclick: () => setTodos(todos.filter(t => t !== todo))})
+                onclick: () => setTodos(prev => {
+                  const updated = prev.filter(t => t !== todo);
+                  localStorage.setItem('todos', JSON.stringify(updated));
+                  return updated;
+                })
+                })
             ])
           ])
         })
@@ -94,18 +115,18 @@ export const todoApp = () => {
         Span({}, `${todos.reduce((acc, todo) => !todo.completed ? acc + 1 : acc, 0)} item left`)
       ]),
       Ul({className: "filters"}, [
-        Li({onclick: () => setFilter("all")}, Link({href: "/all"}, "All", false)),
-        Li({onclick: () => setFilter("active")}, Link({href: "/active"}, "Active", false)),
-        Li({onclick: () => setFilter("completed")}, Link({href: "/completed"}, "Completed", false))
+        Li({className: filter === "all" ? "selected" : "", onclick: () => setFilter("all")}, Link({href: "/all"}, "All", false)),
+        Li({className: filter === "active" ? "selected" : "", onclick: () => setFilter("active")}, Link({href: "/active"}, "Active", false)),
+        Li({className: filter === "completed" ? "selected" : "", onclick: () => setFilter("completed")}, Link({href: "/completed"}, "Completed", false))
       ]),
       Div({className: "clear-completed"}, [
         Button({className: "clear-completed", 
           onclick: () =>{
-            console.log("clearing")
-            console.log(todos)
-            const filtered = todos.filter((todo) => !todo.completed);
-            console.log(filtered)
-            setTodos(filtered)
+            setTodos(() => {
+              const updated = todos.filter((todo) => !todo.completed);
+              localStorage.setItem('todos', JSON.stringify(updated));
+              return updated;
+            });
           }
         }, "Clear completed")
       ])
@@ -116,12 +137,19 @@ export const todoApp = () => {
 const App = () => {
   return Div({ className: 'app' }, [
     Component(AsideComponent, {}, "aside"),
-    Component(todoApp, {}, "todo-app")
+    Component(todoApp, {}, "todo-app"),
+    Button({
+      onclick: () => {
+        localStorage.removeItem('todos');
+        router.reload();
+      }
+    }, "Reset")
   ])
 }
 
 
-router.register("/", App);
+router.register("/:filter", App, "Todo App");
+router.register("/", App, "Todo App");
 
 router.start();
 
