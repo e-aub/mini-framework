@@ -1,4 +1,4 @@
-import { jsx, render, useState, Div, P, Button, Component, Link, router, Aside, Header,H1, H3,H4, H5, Span, Hr,Main, Blockquote, Footer, Ul, Li, Section, Label, Input } from '/framework/index.js';
+import { useState, Div, P, Button, Component, Link, router, Aside, Header,H1, H3,H4, H5, Span, Hr,Main, Blockquote, Footer, Ul, Li, Section, Label, Input } from '/framework/index.js';
 
 const AsideComponent = () => {
   return Aside({className: "about"}, [
@@ -139,6 +139,7 @@ const App = () => {
     Component(AsideComponent, {}, "aside"),
     Component(todoApp, {}, "todo-app"),
     Button({
+      className: "reset",
       onclick: () => {
         localStorage.removeItem('todos');
         router.reload();
