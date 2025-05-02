@@ -131,7 +131,6 @@ function rerender(componentTitle) {
   
   
   const componentState = componentStates.get(componentTitle);
-  console.log("componentState for ",componentTitle," : ",componentState);
   if (!componentState) {
     console.error(`Component state not found for ${componentTitle}`);
     return;
@@ -152,7 +151,6 @@ function rerender(componentTitle) {
   
   
   diff(oldVdom, vdom);
-  console.error("oldVdom for ",componentTitle," : ",oldVdom, "and newVdom : ",vdom);
   componentState.vdom = vdom;
   
   

@@ -1,4 +1,5 @@
 import { render } from "./dom.js";
+import { Div, H1, P } from "./components.js";
 
 class Router {
   constructor() {
@@ -9,6 +10,11 @@ class Router {
     this.currentIndex = -1;
     this.initialized = false;
     this.ownDomain = window.location.origin;
+    this.notFoundHandler = () => {
+      return(
+       H1({}, ["404 Not Found"])
+      );
+    };
 
     window.addEventListener("popstate", this._onPopState.bind(this));
     
@@ -38,7 +44,7 @@ class Router {
     const match = this._matchRoute(pathname);
 
     if (!match) {
-      console.warn(`Route not found: ${pathname}`);
+      render("not-found", this.notFoundHandler);
       return;
     }
 
@@ -47,7 +53,6 @@ class Router {
     this.history = this.history.slice(0, this.currentIndex + 1);
     this.history.push(state);
     this.currentIndex++;
-    console.log("rendering...", match);
     document.title = match.title;
     render(match.path, match.handler);
   }
@@ -58,7 +63,6 @@ reload() {
   const match = this._matchRoute(path);
 
   if (match) {
-    console.log("Reloading route:", match);
     document.title = match.title; 
     render(match.path, match.handler);
   } else {
@@ -85,10 +89,9 @@ reload() {
 
     const index = this.history.findIndex((s) => s.id === state.id);
     this.currentIndex = index;
-    console.log("match",match);
 
     if (match) render(match.path, match.handler);
-    else console.warn(`Route not found: ${pathname}`);
+    else render("not-found", this.notFoundHandler);
   }
 
   _matchRoute(pathname) {
@@ -115,8 +118,6 @@ reload() {
   start() {
     const path = window.location.pathname;
     const queryStr = window.location.search;
-    console.log("pathname in start",path);
-    console.log("queryStr",queryStr);
     const query = this._parseQuery(queryStr || "");
     const match = this._matchRoute(path);
 
@@ -126,12 +127,11 @@ reload() {
     this.currentIndex = 0;
 
     if (match){
-      console.log(match);
       document.title = match.title;
       render(match.path, match.handler, {});
     }else {
-      console.log()
-      console.log("no match");
+      console.warn(`No route match for start: ${path}`);
+      render("not-found", this.notFoundHandler);
     }
   }
 
@@ -146,6 +146,10 @@ reload() {
 
   currentPath() {
     return this.currentPath || window.location.pathname;
+  }
+
+  setNotFoundHandler(handler) {
+    this.notFoundHandler = handler;
   }
 }
 

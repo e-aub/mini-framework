@@ -46,7 +46,6 @@ export function areDepsEqual(newDeps, oldDeps) {
 
 export function Watch(callback, deps = null) {
     const currentComponent = componentStack.current;
-  console.log("this is current component",currentComponent);
 
 
     if (!afterRenderEffects.has(currentComponent)) {
@@ -101,7 +100,6 @@ export function Watch(callback, deps = null) {
 
 export function applyCallbacksAfterRender() {
     const currentComponent = componentStack.current;
-    console.log("this is current component",currentComponent);
     const currentAfterRenderEffects = afterRenderEffects.get(currentComponent);
 
     afterRenderEffects.set(currentComponent, []);
