@@ -532,12 +532,10 @@ hr {
 }
 
 .input-container.invalid {
-    border: 2px solid #ce4646;
-    animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
-    transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;
-    perspective: 1000px
+    border: 2px solid #e74c3c; 
+    background-color: #fdecea; 
 }
+    
 
 li.selected {
     border: 1px solid #b83f45;
