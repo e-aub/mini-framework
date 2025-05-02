@@ -82,7 +82,8 @@ export const todoApp = () => {
                 oninput: (e) => setTodos(todos.map(t => t === todo ? {...t, completed: e.target.checked} : t)),
                 type: "checkbox"}),
               Label({className: "label"}, todo.text),
-              Button({className: "destroy"})
+              Button({className: "destroy", 
+                onclick: () => setTodos(todos.filter(t => t !== todo))})
             ])
           ])
         })
