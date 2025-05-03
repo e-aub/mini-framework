@@ -1,5 +1,5 @@
 import { componentIndexes, componentStates } from "./state.js";
-import  componentStack from "./componentStack.js";
+import componentStack from "./componentStack.js";
 import { diff } from "./diff.js";
 import { applyCallbacksAfterRender } from "./watch.js";
 import { refs } from "./useRef.js";
@@ -14,7 +14,7 @@ function Create(tag, props, ...children) {
       return {
         type: "text",
         value: child,
-        ref : null
+        ref: null
       };
     }
     return child;
@@ -24,7 +24,7 @@ function Create(tag, props, ...children) {
     tag,
     props: props || {},
     children: processedChildren,
-    ref : null
+    ref: null
   };
 }
 
@@ -49,7 +49,9 @@ function createElement(node) {
   const children = node.children || [];
 
   Object.entries(props).forEach(([name, val]) => {
-    if (name.startsWith("on") && typeof val === "function") {
+    if (name === "autofocus") {
+      element.autofocus = true;
+    } else if (name.startsWith("on") && typeof val === "function") {
       element[name.toLowerCase()] = val;
     } else if (name === "className") {
       element.className = val;
@@ -76,7 +78,7 @@ function createElement(node) {
   return element;
 }
 
-function render(componentTitle, componentFn, props={}) {
+function render(componentTitle, componentFn, props = {}) {
   componentStack.push(componentTitle);
 
   let rootElement = document.getElementById("root");
@@ -86,78 +88,77 @@ function render(componentTitle, componentFn, props={}) {
     rootElement.id = "root";
     document.body.appendChild(rootElement);
   } else {
-    
+
     rootElement.innerHTML = "";
-    
+
   }
-  
-  
+
+
   if (!componentStates.has(componentTitle)) {
     componentStates.set(componentTitle, { states: [], vdom: null });
   }
-  
-  
+
+
   titleToComponentMap.set(componentTitle, componentFn);
-  
-  
+
+
   componentIndexes.set(componentTitle, 0);
-  
-  
+
+
   const vdom = componentFn(props);
   const element = createElement(vdom);
   vdom.ref = element;
-  
-  
+
+
   const componentState = componentStates.get(componentTitle);
   componentState.vdom = vdom;
   componentStates.set(componentTitle, componentState);
   componentStack.pop();
-  
-  
+
+
   rootElement.appendChild(element);
   return element;
 }
 
 
 function rerender(componentTitle) {
-  
   const componentFn = titleToComponentMap.get(componentTitle);
   if (!componentFn) {
     console.error(`Component function not found for ${componentTitle}`);
     return;
   }
-  
-  
+
+
   componentIndexes.set(componentTitle, 0);
-  
-  
+
+
   const componentState = componentStates.get(componentTitle);
   if (!componentState) {
     console.error(`Component state not found for ${componentTitle}`);
     return;
   }
-  
-  
+
+
   const oldVdom = componentState.vdom;
   if (!oldVdom) {
     console.error(`Invalid vdom for component ${componentTitle}`);
     return;
   }
-  
-  
+
+
   componentStack.push(componentTitle);
   const vdom = componentFn();
-  
-  
-  
-  
+
+
+
+
   diff(oldVdom, vdom);
   componentState.vdom = vdom;
-  
-  
+
+
   applyCallbacksAfterRender();
-  
-  
+
+
   componentStack.pop();
 }
 
@@ -167,37 +168,37 @@ function Component(componentFn, props, title) {
     console.error("Component must have a title");
     return null;
   }
-  
-  
+
+
   titleToComponentMap.set(title, () => componentFn(props));
-  
-  
+
+
   componentIndexes.set(title, 0);
-  
-  
+
+
   if (!componentStates.has(title)) {
     componentStates.set(title, { states: [], vdom: null });
   }
-  
-  
+
+
   componentStack.push(title);
-  
+
   try {
-    
+
     const vdom = componentFn(props);
-    
-    
+
+
     componentStates.get(title).vdom = vdom;
-    
-    
+
+
     vdom.componentTitle = title;
-    
+
     return vdom;
   } catch (error) {
     console.error(`Error rendering component ${title}:`, error);
     return null;
   } finally {
-    
+
     componentStack.pop();
   }
 }

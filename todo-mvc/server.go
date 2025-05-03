@@ -22,6 +22,7 @@ func main() {
 	})
 
 	http.Handle("/assets/", http.StripPrefix("/assets", (http.FileServer(http.Dir("./src/")))))
+	http.Handle("/framework/", http.StripPrefix("/framework", (http.FileServer(http.Dir("./framework/")))))
 	fmt.Println("Server running at http://localhost:8000")
 	http.ListenAndServe(":8000", nil)
 }

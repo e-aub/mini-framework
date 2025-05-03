@@ -1,4 +1,4 @@
-import { Div, H1, Input, Button, Ul, Li, Section, Header, Label, Main, Footer, Span, Link, useState, router } from 'https://cdn.jsdelivr.net/npm/@hacker_man/most-js@1.3.0/index.js';
+import { Div, H1, Input, Button, Ul, Li, Section, Header, Label, Main, Footer, Span, Link, useState, router, useRef } from '/framework/index.js';
 
 
 
@@ -9,11 +9,13 @@ export default function Todo() {
   });
 
   const [input, setInput] = useState('');
+  const [updateInput, setUpdateInput] = useState("");
   const [filter, setFilter] = useState(() => {
     return router.useParams().filter || "all";
   });
 
   const [invalidInput, setInvalidInput] = useState(false);
+  const [invalidUpdateInput, setInvalidUpdateInput] = useState(false)
 
   function validateInput(input) {
     if (!input) {
@@ -28,16 +30,22 @@ export default function Todo() {
     return true;
   }
 
-  const updatecomponent = (event) => {
-    const component = event.target
-    
-  }
+  const updatecomponent = (event, todo) => {
+    setTodos((prev) => {
+      const updated = prev.map(t => t === todo ? { ...t, text: event.target.value, edit: false } : t)
+      localStorage.setItem('todos', JSON.stringify(updated));
+      return updated
+    }
+    )
+  };
+
 
   return Section({ className: "todoapp", id: "root" }, [
     Header({ className: "header" }, [
       H1({}, "todos"),
       Div({ className: `input-container ${invalidInput ? 'invalid' : ''}` }, [
         Input({
+          autofocus: true,
           id: "todo-input",
           className: "new-todo",
           type: "text",
@@ -50,11 +58,10 @@ export default function Todo() {
               }
               setInvalidInput(false);
               setTodos(newTodos => {
-                const updated = [...newTodos, { text: input, completed: false }];
+                const updated = [...newTodos, { text: input, completed: false, edit: false }];
                 localStorage.setItem('todos', JSON.stringify(updated));
                 return updated;
               });
-
               setInput('');
             }
           },
@@ -68,14 +75,42 @@ export default function Todo() {
       ])
     ]),
     Main({ className: "main" }, [
+      todos.length > 0 ? Div({ className: "toggle-all-container" }, [
+        Input({
+          className: "toggle-all", type: "checkbox", id: "toggle-all", checked: localStorage.getItem("toggle-all"),
+          onclick: (e) => {
+            const checked = e.target.checked;
+            setTodos(todos => {
+              const updated = todos.map(t => {
+                return { ...t, completed: checked }
+              })
+              localStorage.setItem('todos', JSON.stringify(updated));
+              localStorage.setItem('toggle-all', checked)
+              return updated
+            })
+          }
+        }),
+        Label({
+          for: "toggle-all",
+          className: `toggle-all-label ${localStorage.getItem("toggle-all") ? 'active' : 'inactive'}`
+        }, ["✓"])
+
+      ]) : "",
       Ul({ className: "todo-list" },
         todos.filter((todo) => filter === 'all' || filter === 'active' && !todo.completed || filter === 'completed' && todo.completed).map((todo) => {
-          return Li({ className: `todo-item ${todo.completed ? 'completed' : ''}`, key: todo.text, ondblclick: updatecomponent, }, [
-            Div({ className: "view" }, [
+          return Li({
+            className: `todo-item ${todo.completed ? 'completed' : ''}`, key: todo.text,
+            ondblclick: (event) => {
+              setTodos(todos =>
+                todos.map(t => t === todo ? { ...t, edit: true } : { ...t, edit: false })
+              );
+            }
+          }, [
+            !todo.edit ? Div({ className: "view" }, [
               Input({
                 className: `toggle ${todo.completed ? 'checked' : ''}`,
-                oninput: (e) => setTodos(prev => {
-                  const updated = prev.map(t => t === todo ? { ...t, completed: e.target.checked } : t);
+                oninput: (e) => setTodos(todos => {
+                  const updated = todos.map(t => t === todo ? { ...t, completed: !t.completed } : t);
                   localStorage.setItem('todos', JSON.stringify(updated));
                   return updated;
                 }),
@@ -90,6 +125,34 @@ export default function Todo() {
                   return updated;
                 })
               })
+            ]) : Div({ className: `input-container ${invalidUpdateInput ? 'invalid' : ''}` }, [
+              Input({
+                onBlur: (e) => {
+                  console.warn("onblur evebt")
+                  setTodos(todos =>
+                    todos.map(t => { return { ...t, edit: false } })
+                  );
+                },
+                id: "todo-input",
+                className: "new-todo",
+                type: "text",
+                value: updateInput || todo.text,
+                onkeydown: (e) => {
+                  if (e.key === "Enter") {
+                    if (!validateInput(updateInput)) {
+                      setInvalidUpdateInput(true);
+                      return;
+                    }
+                    setInvalidUpdateInput(false);
+                    updatecomponent(e, todo)
+                    setUpdateInput('');
+                  }
+                },
+                oninput: (e) => {
+                  setUpdateInput(e.target.value);
+                  setInvalidUpdateInput(!validateInput(e.target.value));
+                },
+              }),
             ])
           ])
         })
@@ -100,9 +163,9 @@ export default function Todo() {
         Span({}, `${todos.reduce((acc, todo) => !todo.completed ? acc + 1 : acc, 0)} item left`)
       ]),
       Ul({ className: "filters" }, [
-        Li({ className: filter === "all" ? "selected" : "", onclick: () => setFilter("all") }, Link({ href: "/all" }, "All", false)),
-        Li({ className: filter === "active" ? "selected" : "", onclick: () => setFilter("active") }, Link({ href: "/active" }, "Active", false)),
-        Li({ className: filter === "completed" ? "selected" : "", onclick: () => setFilter("completed") }, Link({ href: "/completed" }, "Completed", false))
+        Li({ className: filter === "all" ? "selected" : "", onclick: () => setFilter(() => "all") }, Link({ href: "/all" }, "All", false)),
+        Li({ className: filter === "active" ? "selected" : "", onclick: () => setFilter(() => "active") }, Link({ href: "/active" }, "Active", false)),
+        Li({ className: filter === "completed" ? "selected" : "", onclick: () => setFilter(() => "completed") }, Link({ href: "/completed" }, "Completed", false))
       ]),
       Div({ className: "clear-completed" }, [
         Button({
