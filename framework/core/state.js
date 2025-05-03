@@ -31,7 +31,8 @@ function useState(initial) {
   const componentTitle = component;
 
   const setState = (value) => {
-   
+   console.log("setState");
+   console.log(componentTitle);
     const targetComponentState = componentStates.get(componentTitle);
     if (!targetComponentState) {
       console.error(`Component state not found for ${componentTitle}`);
@@ -40,6 +41,9 @@ function useState(initial) {
     
     const oldValue = targetComponentState.states[localIndex];
     const newValue = typeof value === "function" ? value(oldValue) : value;
+
+    console.log("oldValue", oldValue);
+    console.log("newValue", newValue);
     
     let shouldRerender = false;
     
@@ -53,24 +57,19 @@ function useState(initial) {
         targetComponentState.states[localIndex] = newValue;
         shouldRerender = true;
       }
-    }
-   
-    else if (isPlainObject(oldValue) && isPlainObject(newValue)) {
+    }else if (isPlainObject(oldValue) && isPlainObject(newValue)) {
       if (!shallowEqualObjects(newValue, oldValue)) {
         targetComponentState.states[localIndex] = newValue;
         shouldRerender = true;
       }
-    }
-   
-    else if (oldValue !== newValue) {
+    }else if (oldValue !== newValue) {
       targetComponentState.states[localIndex] = newValue;
       shouldRerender = true;
     }
     
-   
+    console.log("shouldRerender", shouldRerender);
     if (shouldRerender) {
-     
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         rerender(componentTitle);
       }, 0);
     }

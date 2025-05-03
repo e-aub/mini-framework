@@ -77,6 +77,8 @@ function createElement(node) {
 }
 
 function render(componentTitle, componentFn, props={}) {
+  componentStack.push(componentTitle);
+
   let rootElement = document.getElementById("root");
   componentStates.clear();
   if (!rootElement) {
@@ -101,7 +103,6 @@ function render(componentTitle, componentFn, props={}) {
   componentIndexes.set(componentTitle, 0);
   
   
-  componentStack.push(componentTitle);
   const vdom = componentFn(props);
   const element = createElement(vdom);
   vdom.ref = element;

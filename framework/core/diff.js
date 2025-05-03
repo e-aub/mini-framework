@@ -3,6 +3,7 @@ import { componentStates } from "./state.js";
 import componentStack from "./componentStack.js";
 
 function diff(oldVNode, newVNode) {
+  console.log(oldVNode, newVNode);
   if (!oldVNode || !newVNode) return;
   const parentEl = oldVNode.ref
   const oldChildren = oldVNode.children || [];
@@ -80,6 +81,7 @@ function diff(oldVNode, newVNode) {
 
   const currentComponent = componentStack.current;
   componentStates.get(currentComponent).vdom = { newVNode };
+  console.error("newVNode", newVNode);
 }
 
 function patchElement(oldVNode, newVNode) {
