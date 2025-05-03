@@ -3,8 +3,12 @@ import { componentStates } from "./state.js";
 import componentStack from "./componentStack.js";
 
 function diff(oldVNode, newVNode) {
-  console.log(oldVNode, newVNode);
+  console.log(oldVNode, newVNode)
   if (!oldVNode || !newVNode) return;
+  if (!oldVNode.ref) {
+    console.error("Missing ref in oldVNode:", oldVNode);
+    return;
+  }
   const parentEl = oldVNode.ref
   const oldChildren = oldVNode.children || [];
   const newChildren = newVNode.children || [];
@@ -14,9 +18,10 @@ function diff(oldVNode, newVNode) {
 
   for (let i = 0; i < newChildren.length; i++) {
     const newChild = newChildren[i];
+    if (!newChild)return
     let matchIndex = -1;
-
-    if (newChild.props?.key != null) {
+    console.log("new child",newChild)
+    if (newChild?.props?.key != null) {
       for (let j = 0; j < oldChildren.length; j++) {
         if (matchedOld.has(j)) continue;
 
@@ -53,6 +58,8 @@ function diff(oldVNode, newVNode) {
       matchedOld.add(matchIndex);
 
       const existing = oldChild.ref;
+
+      // this line causes undefined
       const refAtIndex = parentEl.childNodes[currentDomIndex];
       if (refAtIndex !== existing) {
         parentEl.insertBefore(existing, refAtIndex || null);
@@ -80,7 +87,7 @@ function diff(oldVNode, newVNode) {
   newVNode.ref = oldVNode.ref;
 
   const currentComponent = componentStack.current;
-  componentStates.get(currentComponent).vdom = { newVNode };
+  componentStates.get(currentComponent).vdom = newVNode
   console.error("newVNode", newVNode);
 }
 

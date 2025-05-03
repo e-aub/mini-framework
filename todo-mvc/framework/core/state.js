@@ -8,6 +8,7 @@ const componentIndexes = new Map();
 
 function useState(initial) {
   const component = componentStack.current;
+  console.error("component", component);
   
   if (!component) {
     console.error("useState called outside component context");

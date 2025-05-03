@@ -120,7 +120,6 @@ function render(componentTitle, componentFn, props={}) {
 
 
 function rerender(componentTitle) {
-  
   const componentFn = titleToComponentMap.get(componentTitle);
   if (!componentFn) {
     console.error(`Component function not found for ${componentTitle}`);

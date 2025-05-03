@@ -1,8 +1,8 @@
 import componentStack from "./componentStack.js";
 
 let oldDependencies = new Map();
-let cleanupFunctions = new Map()
 let afterRenderEffects = new Map();
+let watchEffects = new Map();
 
 export function isPlainObject(obj) {
     return obj !== null && typeof obj === "object" && obj.constructor === Object;
@@ -16,7 +16,6 @@ export function shallowEqualObjects(a, b) {
 }
 
 export function areDepsEqual(newDeps, oldDeps) {
-    if (newDeps.length)
     if (newDeps.length !== oldDeps.length) return false;
 
     return newDeps.every((dep, i) => {
@@ -27,12 +26,11 @@ export function areDepsEqual(newDeps, oldDeps) {
             return dep.every((val, j) => {
                 if (Array.isArray(val) && Array.isArray(oldDep[j])) {
                     return areDepsEqual(val, oldDep[j]);
-                }else if (isPlainObject(val) && isPlainObject(oldDep[j])) {
+                } else if (isPlainObject(val) && isPlainObject(oldDep[j])) {
                     return shallowEqualObjects(val, oldDep[j]);
                 }
 
                 return val === oldDep[j];
-
             });
         }
 
@@ -45,8 +43,18 @@ export function areDepsEqual(newDeps, oldDeps) {
 }
 
 export function Watch(callback, deps = null) {
+    console.log("Watch called with dependencies:", deps);
     const currentComponent = componentStack.current;
+    if (!currentComponent) {
+        console.error("Watch called outside component context");
+        return;
+    }
 
+    if (!watchEffects.has(currentComponent)) {
+        watchEffects.set(currentComponent, [{effects: [], index : 0}]);
+    }
+
+    
 
     if (!afterRenderEffects.has(currentComponent)) {
         afterRenderEffects.set(currentComponent, []);
@@ -54,19 +62,16 @@ export function Watch(callback, deps = null) {
 
     const effects = afterRenderEffects.get(currentComponent);
 
+    
     if (!deps) {
+        console.log("No deps provided, will run effect");
         effects.push(() => {
-            const cleanup = cleanupFunctions.get(currentComponent);
-            if (typeof cleanup === "function") cleanup();
-
-            const result = callback();
-            if (typeof result === "function") {
-                cleanupFunctions.set(currentComponent, result);
-            }
+            callback();
         });
         return;
     }
 
+    
     if (!Array.isArray(deps)) {
         console.error(
             "%c[Watch Error]%c Expected an array of dependencies.\n" +
@@ -79,43 +84,50 @@ export function Watch(callback, deps = null) {
         return;
     }
 
+    
     const oldDeps = oldDependencies.get(currentComponent) || [];
-    const hasChanged = !areDepsEqual(deps, oldDeps);
+    
+    
+    const hasChanged = oldDeps.length === 0 || !areDepsEqual(deps, oldDeps);
+
+    console.log("Dependencies changed?", hasChanged, "Old:", oldDeps, "New:", deps);
 
     if (hasChanged) {
+        console.log("Dependencies changed, adding effect to queue");
+        
         oldDependencies.set(currentComponent, [...deps]);
 
+        
         effects.push(() => {
-            const cleanup = cleanupFunctions.get(currentComponent);
-            if (typeof cleanup === "function") cleanup();
-
-            const result = callback();
-            if (typeof result === "function") {
-                cleanupFunctions.set(currentComponent, result);
-            }
+            callback();
         });
     }
 }
 
-
 export function applyCallbacksAfterRender() {
     const currentComponent = componentStack.current;
+    
+    if (!currentComponent || !afterRenderEffects.has(currentComponent)) {
+        return;
+    }
+    
     const currentAfterRenderEffects = afterRenderEffects.get(currentComponent);
-
+    
+    
     afterRenderEffects.set(currentComponent, []);
 
-    requestAnimationFrame(() => {
-        if (currentAfterRenderEffects) {
+    
+    if (currentAfterRenderEffects && currentAfterRenderEffects.length > 0) {
+        console.log(`Executing ${currentAfterRenderEffects.length} effects for component`);
+        
+        requestAnimationFrame(() => {
             currentAfterRenderEffects.forEach((callback) => {
                 try {
-                    const result = callback();
-                    if (typeof result === "function") {
-                        cleanupFunctions.set(currentComponent, result);
-                    }
+                    callback();
                 } catch (error) {
                     console.error("Error in effect:", error);
                 }
             });
-        }
-    });
+        });
+    }
 }

@@ -1,4 +1,4 @@
-import {Div, P, Button, Component, router } from 'https://cdn.jsdelivr.net/npm/@hacker_man/most-js@1.3.0/index.js';
+import {Div, P, Button, Component, router } from '/framework/index.js';
 import NotFoundHandler from '/assets/components/NotFound.js';
 import AsideComponent from '/assets/components/Aside.js';
 import Todo from '/assets/components/Todo.js';

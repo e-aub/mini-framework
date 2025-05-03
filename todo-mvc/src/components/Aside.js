@@ -1,4 +1,4 @@
-import { Aside, Header, H3, Span, H5, Link, Hr, Blockquote, P, Footer, Ul, Li, H4 } from 'https://cdn.jsdelivr.net/npm/@hacker_man/most-js@1.3.0/index.js';
+import { Aside, Header, H3, Span, H5, Link, Hr, Blockquote, P, Footer, Ul, Li, H4 } from '/framework/index.js';
 
 export default function AsideComponent() {
   return Aside({className: "about"}, [
